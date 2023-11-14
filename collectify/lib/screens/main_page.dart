@@ -31,16 +31,65 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Colors.blue,
       bottomNavigationBar: myBottomNavigationBar(),
       body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 40.0),
-          child: CarouselSlider(
-              items: images,
-              options: CarouselOptions(
-                height: 200,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                viewportFraction: 0.7
-              )),
+        Expanded(
+          child: Container(
+            child: Text('Favoriler',style: TextStyle(color: Colors.white),),
+            height: 10,
+          ),
+          flex: 1,
+        ),
+        Expanded(
+          flex: 7,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0,bottom: 10),
+            child: CarouselSlider(
+                items: images,
+                options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.7)),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            child: Text('Fırından Yeni Çıktı',style: TextStyle(color: Colors.white)),
+            height: 10,
+          ),
+          flex: 1,
+        ),
+        Expanded(
+          flex: 7,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0,bottom: 10),
+            child: CarouselSlider(
+                items: images,
+                options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.7)),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            child: Text('Son Görüntülenenler',style: TextStyle(color: Colors.white)),
+            height: 10,
+          ),
+          flex: 1,
+        ),
+        Expanded(
+          flex: 7,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20.0,bottom: 15),
+            child: CarouselSlider(
+                items: images,
+                options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.7)),
+          ),
         ),
       ]),
     );

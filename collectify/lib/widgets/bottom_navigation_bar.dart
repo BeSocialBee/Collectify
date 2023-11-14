@@ -11,24 +11,29 @@ class myBottomNavigationBar extends StatefulWidget {
 
 class _myBottomNavigationBarState extends State<myBottomNavigationBar> {
   int _selectedIndex = 0;
+  int _currentIndex = 0;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    switch (index) {
-      case 0:
-        Navigator.pushNamed(context, MainPage.id);
-        break;
-      case 1:
-        Navigator.pushNamed(context, MyCollection.id);
-        break;
-      case 2:
-        Navigator.pushNamed(context, Market.id);
-        break;
-      case 3:
-        Navigator.pushNamed(context, MyAccount.id);
-        break;
+    if (_currentIndex != index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+
+      switch (index) {
+        case 0:
+          Navigator.pushNamed(context, MainPage.id);
+          break;
+        case 1:
+          Navigator.pushNamed(context, MyCollection.id);
+          break;
+        case 2:
+          Navigator.pushNamed(context, Market.id);
+          break;
+        case 3:
+          Navigator.pushNamed(context, MyAccount.id);
+          break;
+      }
+      _currentIndex = index;
     }
   }
 

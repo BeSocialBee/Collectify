@@ -43,7 +43,7 @@ class _MyCollectionState extends State<MyCollection> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return CardDetailsPage(card);
+          return CardDetailsPage();
         },
       ),
     );
