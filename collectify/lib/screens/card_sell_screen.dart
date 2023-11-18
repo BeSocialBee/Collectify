@@ -7,7 +7,8 @@ class CardSellPage extends StatefulWidget {
 
 class _CardSellPageState extends State<CardSellPage>
     with TickerProviderStateMixin {
-  double _sliderValue = 50.0;
+  double _auctionPrice = 50.0;
+  double _quickSellPrice = 50.0;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class _CardSellPageState extends State<CardSellPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Satışa Çıkar',
+                'Başlangıç Fiyatı:',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 30,
@@ -49,18 +50,18 @@ class _CardSellPageState extends State<CardSellPage>
               ),
               SizedBox(height: 20),
               Slider(
-                value: _sliderValue,
+                value: _auctionPrice,
                 min: 0,
                 max: 100,
                 onChanged: (value) {
                   setState(() {
-                    _sliderValue = value;
+                    _auctionPrice = value;
                   });
                 },
               ),
               SizedBox(height: 20),
               Text(
-                'Price: ${_sliderValue.toStringAsFixed(1)}',
+                'Price: ${_auctionPrice.toStringAsFixed(1)}',
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 20),
@@ -82,7 +83,7 @@ class _CardSellPageState extends State<CardSellPage>
                 child: Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Butona tıklandığında yapılacak işlemler
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightBlueAccent,
@@ -102,7 +103,7 @@ class _CardSellPageState extends State<CardSellPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Satışa Çıkar',
+                'Satış Fiyatı',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 30,
@@ -111,18 +112,18 @@ class _CardSellPageState extends State<CardSellPage>
               ),
               SizedBox(height: 20),
               Slider(
-                value: _sliderValue,
+                value: _quickSellPrice,
                 min: 0,
                 max: 100,
                 onChanged: (value) {
                   setState(() {
-                    _sliderValue = value;
+                    _quickSellPrice = value;
                   });
                 },
               ),
               SizedBox(height: 20),
               Text(
-                'Price: ${_sliderValue.toStringAsFixed(1)}',
+                'Price: ${_quickSellPrice.toStringAsFixed(1)}',
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 20),
@@ -144,7 +145,7 @@ class _CardSellPageState extends State<CardSellPage>
                 child: Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Butona tıklandığında yapılacak işlemler
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightBlueAccent,
@@ -165,3 +166,5 @@ class _CardSellPageState extends State<CardSellPage>
     ]);
   }
 }
+
+

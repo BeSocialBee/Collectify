@@ -73,11 +73,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     showSpinner = true;
                   });
                   try {
-                    final user = await _auth.signInWithEmailAndPassword(
-                        email: email!, password: password!);
-                    if (user != null) {
-                      Navigator.pushNamed(context, MainPage.id);
-                    }
+                    // final user = await _auth.signInWithEmailAndPassword(
+                    //     email: email!, password: password!);
+                    //if (user != null) {
+                      Navigator.pushReplacementNamed(context, MainPage.id);
+                    //}
                     setState(() {
                       showSpinner = false;
                     });
