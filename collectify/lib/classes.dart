@@ -9,99 +9,112 @@ class User {
   List<Collection> _collections;
   List<Card> _cards;
 
-  String get getUserName{
+  String get getUserName {
     return _user_name;
   }
-  String get getEmail{
+
+  String get getEmail {
     return _email;
   }
-  String get getPassword{
+
+  String get getPassword {
     return _password;
   }
-  String get getPasswordHash{
+
+  String get getPasswordHash {
     return _password_hash;
   }
-  int get getNumberOfCollection{
+
+  int get getNumberOfCollection {
     return _number_of_collection;
   }
-  int get getNumberOfCard{
+
+  int get getNumberOfCard {
     return _number_of_card;
   }
-  double get getCoin{
+
+  double get getCoin {
     return _coin;
   }
 
-  set setUserName(String userName){
+  set setUserName(String userName) {
     _user_name = userName;
   }
-  set setEmail(String email){
+
+  set setEmail(String email) {
     _email = email;
   }
-  set setPassword(String password){
+
+  set setPassword(String password) {
     _password = password;
   }
-  set setPasswordHash(String passwordHash){
+
+  set setPasswordHash(String passwordHash) {
     _password_hash = passwordHash;
   }
-  set setNumberOfcollection(int numOfCollection){
+
+  set setNumberOfcollection(int numOfCollection) {
     _number_of_collection = numOfCollection;
   }
-  set setNumberOfCard(int numOfcard){
+
+  set setNumberOfCard(int numOfcard) {
     _number_of_card = numOfcard;
   }
-  set setCoin(double coin){
+
+  set setCoin(double coin) {
     _coin = coin;
   }
 
-
-  void sellCard(double cardPrice){
-    _coin += cardPrice; 
+  void sellCard(double cardPrice) {
+    _coin += cardPrice;
     _number_of_card -= 1;
   }
-  void buyCard(double cardPrice){
-    _coin -= cardPrice; 
+
+  void buyCard(double cardPrice) {
+    _coin -= cardPrice;
     _number_of_card += 1;
   }
-
 }
 
-class Card{
+class Card {
   String _name;
   double price;
   String owner;
-
 }
 
-class Collection{
+class Collection {
   String _collection_name;
   List<Card> cards;
 }
 
-class Rarity{
+class Rarity {
   bool _common;
   bool _rare;
   bool _epic;
   bool _legendary;
 
-  void common_card(Card card){
+  void common_card(Card card) {
     _common = true;
     _rare = false;
     _epic = false;
     _legendary = false;
   }
-  void rare_card(Card card){
+
+  void rare_card(Card card) {
     _common = false;
     _rare = true;
     _epic = false;
     _legendary = false;
   }
-  void epic_card(Card card){
+
+  void epic_card(Card card) {
     _common = false;
     _rare = false;
     _epic = true;
     _legendary = false;
   }
-  void legendary_card(Card card){
+
+  void legendary_card(Card card) {
     _common = false;
     _rare = false;
     _epic = false;

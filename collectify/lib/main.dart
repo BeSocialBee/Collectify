@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: RegistrationScreen(), //! Burayı değiştirebilirsiniz
-      //* home: RegistrationScreen() 
+      home: LoginScreen(), //! Burayı değiştirebilirsiniz
+      //* home: RegistrationScreen()
       //* home: CardDetailsPage()
       //* home: MainPage()
       routes: {
