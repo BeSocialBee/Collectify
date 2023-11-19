@@ -37,8 +37,6 @@ class _MyHomePageState extends State<usernamePageWidget> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-      } else {
-        _image = File('./images/user.jpg');
       }
     });
   }
@@ -46,6 +44,8 @@ class _MyHomePageState extends State<usernamePageWidget> {
   // Function to handle username and PP
   void _handleUsernamePP() async {
     String username = _usernameController.text.trim();
+
+    if (_image == null) _image = File('./images/user.jpg');
 
     if (username.length < 4) {
       showCustomDialog("Username must be longer than four characters.");

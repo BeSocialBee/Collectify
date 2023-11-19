@@ -45,7 +45,7 @@ s3 = boto3.client('s3',
 db_connection = mysql.connector.connect(**db_config)
 cursor = db_connection.cursor()
 
- # Generate MySQL table if not exists
+# Generate MySQL table if not exists
 create_table_query = """
 CREATE TABLE IF NOT EXISTS userprofiles(
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,6 +56,23 @@ CREATE TABLE IF NOT EXISTS userprofiles(
 );
 """
 cursor.execute(create_table_query)
+# Commit the changes to the database
+db_connection.commit()
+
+
+# Generate MySQL table if not exists
+create_table_query = """
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255),
+    password VARCHAR(255),
+    isAdmin VARCHAR(5) DEFAULT "NO"
+);
+"""
+cursor.execute(create_table_query)
+# Commit the changes to the database
+db_connection.commit()
+
 
 # user variables
 global email
@@ -146,6 +163,7 @@ def set_usernamePP():
                 return response
 
         
+        
         cursor.execute("INSERT INTO userprofiles (email, username, fileURL) VALUES (%s, %s, %s)", (email, username, s3_image_url,))
         db_connection.commit()
 
@@ -214,6 +232,11 @@ def authenticate_user():
         print(f'Error: {e}')
         return jsonify({'error': 'An error occurred'}), 500
     
+
+
+# Close the cursor and database connection
+# cursor.close()
+# db_connection.close()
 
 
 if __name__ == "__main__":
