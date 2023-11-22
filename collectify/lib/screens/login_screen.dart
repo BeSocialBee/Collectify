@@ -17,15 +17,18 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String email = "";
-  String? password;
+  String password = "";
   bool showSpinner = false;
   bool _isLoginForm = true;
+  bool validEmail = false;
+  bool validPassword = false;
 
   // Function to validate email format
   bool _isEmailValid(String email) {
     // Define a regular expression for a simple email format
     // This example checks for an '@' symbol and '.com'
     RegExp emailRegex = RegExp(r'^[^@]+@[^@]+\.[a-zA-Z]{2,4}$');
+    validEmail = emailRegex.hasMatch(email);
     return emailRegex.hasMatch(email);
   }
 
@@ -37,8 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
       return; // Exit the function early if the email is invalid
     }
 
-    if (password!.length < 6) {
+    if (password.length < 6) {
+      validPassword = false;
       showCustomDialog("Password must be longer than six characters.");
+      return;
     } else {
       // Add your authentication logic here
       String apiUrl = 'http://127.0.0.1:5000/flutter_auth';
@@ -52,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
             '_isLoginForm': _isLoginForm.toString(),
           },
         );
-
+        validPassword = true;
         // Check the response status
         if (response.statusCode == 200) {
           // Successful authentication
@@ -81,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 final responseData2 = json.decode(response2.body);
                 hasUsername = responseData2['hasUsername'];
 
-                if (hasUsername == "true") {
+                if (hasUsername == "true" && validPassword) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => MainPage()),
@@ -197,7 +202,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   setState(() {
                     showSpinner = true;
                   });
-                  //Navigator.pushReplacementNamed(context, MainPage.id);
+                  if (validEmail && validPassword) {
+                    Navigator.pushReplacementNamed(context, MainPage.id);
+                  }
 
                   try {
                     // final user = await _auth.signInWithEmailAndPassword(
