@@ -81,12 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 final responseData2 = json.decode(response2.body);
                 hasUsername = responseData2['hasUsername'];
 
-                if (hasUsername == "true")
+                if (hasUsername == "true") {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MainApp()),
+                    MaterialPageRoute(builder: (context) => MainPage()),
                   );
-                else {
+                } else {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => usernamePage()),
@@ -197,6 +197,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   setState(() {
                     showSpinner = true;
                   });
+                  //Navigator.pushReplacementNamed(context, MainPage.id);
+
                   try {
                     // final user = await _auth.signInWithEmailAndPassword(
                     //     email: email!, password: password!);

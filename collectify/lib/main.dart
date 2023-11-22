@@ -1,3 +1,4 @@
+import 'package:collectify/features/card_gallery.dart';
 import 'package:collectify/screens/card_info_screen.dart';
 import 'package:collectify/screens/login_screen.dart';
 import 'package:collectify/screens/main_page.dart';
@@ -20,12 +21,13 @@ class MyApp extends StatelessWidget {
       home: LoginScreen(), //! Burayı değiştirebilirsiniz
       //* home: RegistrationScreen()
       //* home: CardDetailsPage()
-      //* home: MainPage()
+      //home: MainPage(),
       routes: {
         MyAccount.id: (context) => MyAccount(),
         MainPage.id: (context) => MainPage(),
         Market.id: (context) => Market(),
         MyCollection.id: (context) => MyCollection(),
+        CardDetailsPage.id: (context) => CardDetailsPage(),
       },
     );
   }

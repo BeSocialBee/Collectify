@@ -40,7 +40,8 @@ class _MyCollectionState extends State<MyCollection> {
   }
 
   void _navigateToCardDetails(BuildContext context, CardData card) {
-    Navigator.of(context).push(
+    Navigator.push(
+      context,
       MaterialPageRoute(
         builder: (context) {
           return CardDetailsPage();
