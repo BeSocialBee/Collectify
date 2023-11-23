@@ -82,7 +82,32 @@ username = ""
 
 
 
+# -----------------------------------------------------------------------------------------------------
+# Get images for auction page and fixed price page
+@app.route('/flutter_auctionImageURLS', methods=['GET'])
+def get_auction_image_urls():
 
+    try:
+        cursor.execute("SELECT fileURL FROM Cards")
+        auction_image_urls = [url[0] for url in cursor.fetchall()]  # Extract URLs from tuples 
+
+        return jsonify(auction_image_urls)
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+        return jsonify({'error': 'Internal Server Error'}), 500
+
+# ------------------------------------
+@app.route('/flutter_fixedPriceImageURLS', methods=['GET'])
+def get_fixed_price_image_urls():
+    try:
+        cursor.execute("SELECT fileURL FROM Cards")
+        fixed_price_image_urls = [url[0] for url in cursor.fetchall()]  # Extract URLs from tuples 
+        return jsonify(fixed_price_image_urls)
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 
 
