@@ -134,27 +134,37 @@ class AuctionCardsList extends StatelessWidget {
       future: auctionImageUrls,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Loading indicator while waiting
+          return const CircularProgressIndicator(); // Loading indicator while waiting
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData) {
-          return Text('No data available');
+          return const Text('No data available');
         } else {
           List<dynamic> data = snapshot.data!;
 
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
             ),
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                data[index],
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
+              return GestureDetector(
+                onTap: () {
+                  // Show card information when card is tapped
+                  _showAuctionInfo(context, data[index]);
+                },
+                child: Column(
+                  children: [
+                    Image.network(
+                      data[index],
+                      height: 200,
+                      width: 200,
+                      fit: BoxFit.fill,
+                    ),
+                  ],
+                ),
               ); //CardWidget(CardData(index), data[index]);
             },
           );
@@ -174,33 +184,156 @@ class FixedPriceCardsList extends StatelessWidget {
       future: fixedPriceImageUrls,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Loading indicator while waiting
+          return const CircularProgressIndicator(); // Loading indicator while waiting
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData) {
-          return Text('No data available');
+          return const Text('No data available');
         } else {
           List<dynamic> data = snapshot.data!;
 
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
             ),
             itemCount: data.length,
             itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                data[index],
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ); //
-              //CardWidget(CardData(index), data[index]);
+              return GestureDetector(
+                onTap: () {
+                  // Show card information when card is tapped
+                  _showFixedPriceInfo(context, data[index]);
+                },
+                child: Column(
+                  children: [
+                    Image.network(
+                      data[index],
+                      height: 200,
+                      width: 200,
+                      fit: BoxFit.fill,
+                    ),
+                  ],
+                ),
+              ); //CardWidget(CardData(index), data[index]);
             },
           );
         }
       },
     );
   }
+}
+
+void _showAuctionInfo(BuildContext context, String imageUrl) async {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Card Information Auction'),
+        content: Image.network(imageUrl),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Add your purchase logic here
+              _purchaseAuctionCard(context, imageUrl);
+            },
+            child: const Text('Purchase'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showFixedPriceInfo(BuildContext context, String imageUrl) async {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Card Information Fixed'),
+        content: Image.network(imageUrl),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Add your purchase logic here
+              _purchaseFixedPriceCard(context, imageUrl);
+            },
+            child: const Text('Purchase'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+// Auction Logic Yap
+void _purchaseAuctionCard(BuildContext context, String imageUrl) async {
+  // Add your purchase logic here
+  // For example, you can show a confirmation dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Purchase'),
+        content: const Text('Do you want to purchase this card?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            // Add your purchase confirmation logic here
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+// Auction Logic Yap
+void _purchaseFixedPriceCard(BuildContext context, String imageUrl) async {
+  // Add your purchase logic here
+  // For example, you can show a confirmation dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Purchase'),
+        content: const Text('Do you want to purchase this card?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            // Add your purchase confirmation logic here
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      );
+    },
+  );
 }
