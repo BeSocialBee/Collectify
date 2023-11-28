@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:collectify/widgets/card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:collectify/constants.dart';
 
 class Market extends StatefulWidget {
   static String id = 'market_screen';
@@ -72,7 +74,7 @@ class _MarketState extends State<Market> {
             flex: 1,
             child: ToggleButtons(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 minWidth: 160,
                 minHeight: 50,
               ),
@@ -84,8 +86,8 @@ class _MarketState extends State<Market> {
               splashColor: Colors.white,
               hoverColor: Colors.white,
               children: [
-                Text("Açık Arttırma"),
-                Text("Sabit Fiyat"),
+                const Text("Açık Arttırma"),
+                const Text("Sabit Fiyat"),
               ],
               isSelected: _selections,
               onPressed: (int index) {
@@ -225,69 +227,217 @@ class FixedPriceCardsList extends StatelessWidget {
 }
 
 void _showAuctionInfo(BuildContext context, String imageUrl) async {
+  double _bidAmount = 0.0;
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Card Information Auction'),
-        content: Image.network(imageUrl),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Add your purchase logic here
-              _purchaseAuctionCard(context, imageUrl);
-            },
-            child: const Text('Purchase'),
-          ),
-        ],
+      return FutureBuilder<Map<String, dynamic>>(
+        // Replace this with your asynchronous operation to get card data
+        future: fetchCardData(imageUrl),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text('Failed to fetch card data: ${snapshot.error}'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          } else if (!snapshot.hasData) {
+            return AlertDialog(
+              title: const Text('No Data'),
+              content: const Text('No card data available.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          } else {
+            // Parse Card Information
+            Map<String, dynamic> cardData = snapshot.data!;
+
+            // Display Card Information
+            return AlertDialog(
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${cardData['collectionName']} : ${cardData['title']}',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Image.network(
+                    imageUrl,
+                    height: 250,
+                    width: 250,
+                    fit: BoxFit.fill,
+                  ),
+                  const SizedBox(height: 10),
+                  Text('${cardData['description']}'),
+                  const SizedBox(height: 10),
+                  Text('Price: ${cardData['price']}'),
+                  Text('Rarity: ${cardData['rarity']}'),
+                  const SizedBox(height: 10),
+                  TextField(
+                      onChanged: (value) {
+                        _bidAmount = double.parse(value);
+                      },
+                      decoration: kTextFieldDecoration.copyWith(
+                        hintText: 'Enter your bid',
+                      )),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your purchase logic here
+                    _purchaseAuctionCard(context, imageUrl, _bidAmount);
+                  },
+                  child: const Text('Continue'),
+                ),
+              ],
+            );
+          }
+        },
       );
     },
   );
+}
+
+Future<Map<String, dynamic>> fetchCardData(String imageUrl) async {
+  // Implement your logic to fetch card data based on the imageUrl
+  String url = 'http://127.0.0.1:5000/flutter_showauctioncardinfo';
+
+  final response = await http.post(
+    Uri.parse(url),
+    body: {'imageUrl': imageUrl},
+  );
+
+  if (response.statusCode == 200) {
+    return json.decode(response.body);
+  } else {
+    // Handle error cases
+    throw Exception('Failed to fetch card data!');
+  }
 }
 
 void _showFixedPriceInfo(BuildContext context, String imageUrl) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Card Information Fixed'),
-        content: Image.network(imageUrl),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Add your purchase logic here
-              _purchaseFixedPriceCard(context, imageUrl);
-            },
-            child: const Text('Purchase'),
-          ),
-        ],
+      return FutureBuilder<Map<String, dynamic>>(
+        // Replace this with your asynchronous operation to get card data
+        future: fetchCardData(imageUrl),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text('Failed to fetch card data: ${snapshot.error}'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          } else if (!snapshot.hasData) {
+            return AlertDialog(
+              title: const Text('No Data'),
+              content: const Text('No card data available.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          } else {
+            // Parse Card Information
+            Map<String, dynamic> cardData = snapshot.data!;
+
+            // Display Card Information
+            return AlertDialog(
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${cardData['collectionName']} : ${cardData['title']}',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Image.network(
+                    imageUrl,
+                    height: 250,
+                    width: 250,
+                    fit: BoxFit.fill,
+                  ),
+                  const SizedBox(height: 10),
+                  Text('${cardData['description']}'),
+                  const SizedBox(height: 10),
+                  Text('Price: ${cardData['price']}'),
+                  Text('Rarity: ${cardData['rarity']}'),
+                  // Add more fields as needed
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your purchase logic here
+                    _purchaseFixedPriceCard(context, imageUrl);
+                  },
+                  child: const Text('Purchase'),
+                ),
+              ],
+            );
+          }
+        },
       );
     },
   );
 }
 
 // Auction Logic Yap
-void _purchaseAuctionCard(BuildContext context, String imageUrl) async {
+void _purchaseAuctionCard(
+    BuildContext context, String imageUrl, double _bidAmount) async {
   // Add your purchase logic here
   // For example, you can show a confirmation dialog
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Confirm Purchase'),
-        content: const Text('Do you want to purchase this card?'),
+        title: const Text('Confirm'),
+        content: Text(
+            'You are about to place a bid of \$${_bidAmount.toStringAsFixed(2)}'),
         actions: [
           TextButton(
             onPressed: () {
