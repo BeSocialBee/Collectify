@@ -1,5 +1,8 @@
 import 'package:collectify/features/card_gallery.dart';
+import 'package:collectify/screens/card_details.dart';
 import 'package:collectify/screens/card_info_screen.dart';
+import 'package:collectify/screens/lb.dart';
+import 'package:collectify/screens/leaderboard.dart';
 import 'package:collectify/screens/login_screen.dart';
 import 'package:collectify/screens/main_page.dart';
 import 'package:collectify/screens/market.dart';
@@ -12,16 +15,19 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
+  // ! runApp(CardGallery());
+  // ! runApp(CardDetailsPage());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginScreen(), //! Burayı değiştirebilirsiniz
+      //home: LoginScreen(), //! Burayı değiştirebilirsiniz
       //* home: RegistrationScreen()
-      //* home: CardDetailsPage()
-      //home: MainPage(),
+      home: LeaderBoardScreen1(),
+      //home: LeaderBoardScreen(),
+      //home:MainPage(),
       routes: {
         MyAccount.id: (context) => MyAccount(),
         MainPage.id: (context) => MainPage(),
