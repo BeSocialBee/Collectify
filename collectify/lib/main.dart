@@ -23,7 +23,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+<<<<<<< HEAD
       //home: LoginScreen(), //! Burayı değiştirebilirsiniz
+=======
+      home: MainPage(), //! Burayı değiştirebilirsiniz
+>>>>>>> 93b90c67e46c1ff83699dcf20534ac2c1e8a31d7
       //* home: RegistrationScreen()
       home: LeaderBoardScreen1(),
       //home: LeaderBoardScreen(),

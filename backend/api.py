@@ -84,6 +84,70 @@ username = ""
 
 
 
+# -----------------------------------------------------------------------------------------------------
+# Get card info for auction page and fixed price page
+@app.route('/flutter_showauctioncardinfo', methods=['POST'])
+def show_auction_card_info():
+    try:
+        # Get the image URL from the request data
+        image_url = request.form.get('imageUrl')
+
+        cursor.execute("SELECT title FROM Cards WHERE fileURL = %s", (image_url,))
+        title = cursor.fetchone()
+
+        cursor.execute("SELECT description FROM Cards WHERE fileURL = %s", (image_url,))
+        description = cursor.fetchone()
+
+        cursor.execute("SELECT collectionName FROM Cards WHERE fileURL = %s", (image_url,))
+        collectionName = cursor.fetchone()
+
+        cursor.execute("SELECT price FROM Cards WHERE fileURL = %s", (image_url,))
+        price = cursor.fetchone()
+
+        #cursor.execute("SELECT rarity FROM Cards WHERE fileURL = %s", (image_url,))
+        #rarity = cursor.fetchone()
+       
+
+        card_data = {
+            'title': title,
+            'description': description,
+            'collectionName': collectionName,
+            'price': price,
+            #'rarity': rarity,
+        }
+        return jsonify(card_data)
+
+    except Exception as e:
+        # Handle errors
+        return jsonify({'error': str(e)}), 500
+
+# -----------------------------------------------------------------------------------------------------
+# Get images for auction page and fixed price page
+@app.route('/flutter_auctionImageURLS', methods=['GET'])
+def get_auction_image_urls():
+
+    try:
+        cursor.execute("SELECT fileURL FROM Cards")
+        auction_image_urls = [url[0] for url in cursor.fetchall()]  # Extract URLs from tuples 
+
+        return jsonify(auction_image_urls)
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+        return jsonify({'error': 'Internal Server Error'}), 500
+
+# ------------------------------------
+@app.route('/flutter_fixedPrices', methods=['GET'])
+def get_fixed_price_image_urls():
+    try:
+        cursor.execute("SELECT fileURL FROM Cards")
+        fixed_price_image_urls = [url[0] for url in cursor.fetchall()]  # Extract URLs from tuples 
+        return jsonify(fixed_price_image_urls)
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+        return jsonify({'error': 'Internal Server Error'}), 500
+
 
 
 # -----------------------------------------------------------------------------------------------------
