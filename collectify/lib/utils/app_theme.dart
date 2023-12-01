@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'text_theme.dart';
 
-
-class TAppTheme{
+class TAppTheme {
   TAppTheme._();
 
   static ThemeData lightTheme = ThemeData(
@@ -11,8 +10,7 @@ class TAppTheme{
     scaffoldBackgroundColor: Colors.white,
     brightness: Brightness.light,
     textTheme: TTextTheme.lightTextTheme,
-    fontFamily: ,
-
+    //fontFamily: ,
   );
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
@@ -20,6 +18,6 @@ class TAppTheme{
     scaffoldBackgroundColor: Colors.white,
     brightness: Brightness.light,
     textTheme: TTextTheme.darkTextTheme,
-    fontFamily: ,
+    //fontFamily: ,
   );
 }

@@ -39,39 +39,9 @@ s3 = boto3.client('s3',
                     )
 
 
-
-
 # Create a MySQL connection
 db_connection = mysql.connector.connect(**db_config)
 cursor = db_connection.cursor()
-
-# Generate MySQL table if not exists
-create_table_query = """
-CREATE TABLE IF NOT EXISTS userprofiles(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100) NOT NULL,
-    username VARCHAR(100) NOT NULL,
-    date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    fileURL VARCHAR(200) NOT NULL
-);
-"""
-cursor.execute(create_table_query)
-# Commit the changes to the database
-db_connection.commit()
-
-
-# Generate MySQL table if not exists
-create_table_query = """
-CREATE TABLE IF NOT EXISTS users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255),
-    password VARCHAR(255),
-    isAdmin VARCHAR(5) DEFAULT "NO"
-);
-"""
-cursor.execute(create_table_query)
-# Commit the changes to the database
-db_connection.commit()
 
 
 # user variables
@@ -79,9 +49,6 @@ global email
 email = ""
 password = ""
 username = ""
-
-
-
 
 
 # -----------------------------------------------------------------------------------------------------
@@ -123,26 +90,47 @@ def show_auction_card_info():
 
 # -----------------------------------------------------------------------------------------------------
 # Get images for auction page and fixed price page
-@app.route('/flutter_auctionImageURLS', methods=['GET'])
+@app.route('/flutter_auctionData', methods=['GET'])
 def get_auction_image_urls():
 
     try:
         cursor.execute("SELECT fileURL FROM Cards")
         auction_image_urls = [url[0] for url in cursor.fetchall()]  # Extract URLs from tuples 
 
-        return jsonify(auction_image_urls)
+        cursor.execute("SELECT price FROM Cards")
+        price =  [url[0] for url in cursor.fetchall()] 
+
+        card_data = {
+            'auction_image_urls': auction_image_urls,
+            'price': price,
+        }
+
+        #print('Auction Image URLs:', auction_image_urls)
+        #print('Prices:', price)
+
+        return jsonify(card_data)
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
         return jsonify({'error': 'Internal Server Error'}), 500
 
 # ------------------------------------
-@app.route('/flutter_fixedPrices', methods=['GET'])
+@app.route('/flutter_fixedPriceData', methods=['GET'])
 def get_fixed_price_image_urls():
     try:
         cursor.execute("SELECT fileURL FROM Cards")
         fixed_price_image_urls = [url[0] for url in cursor.fetchall()]  # Extract URLs from tuples 
-        return jsonify(fixed_price_image_urls)
+
+        cursor.execute("SELECT price FROM Cards")
+        price =  [url[0] for url in cursor.fetchall()] 
+
+
+        card_data = {
+            'fixed_price_image_urls': fixed_price_image_urls,
+            'price': price,
+        }
+
+        return jsonify(card_data)
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")

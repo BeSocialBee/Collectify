@@ -13,8 +13,8 @@ class Market extends StatefulWidget {
 }
 
 class _MarketState extends State<Market> {
-  late Future<List<dynamic>> auctionImageUrls;
-  late Future<List<dynamic>> fixedPriceImageUrls;
+  late Future<Map<String, dynamic>> auctionData;
+  late Future<Map<String, dynamic>> fixedPriceData;
 
   final List<bool> _selections = [
     true,
@@ -26,33 +26,33 @@ class _MarketState extends State<Market> {
     super.initState();
     // Fetch image URLs when the widget is initialized
     if (_selections[0]) {
-      auctionImageUrls = fetchAuctionImageUrls();
+      auctionData = fetchAuctionData();
     }
   }
 
-  Future<List<dynamic>> fetchAuctionImageUrls() async {
-    String apiUrlAuction = 'http://127.0.0.1:5000/flutter_auctionImageURLS';
+  Future<Map<String, dynamic>> fetchAuctionData() async {
+    String apiUrlAuction = 'http://127.0.0.1:5000/flutter_auctionData';
 
     final auctionResponse = await http.get(Uri.parse(apiUrlAuction));
 
     if (auctionResponse.statusCode == 200) {
-      List<dynamic> auctionImageUrls = json.decode(auctionResponse.body);
-      return auctionImageUrls;
+      Map<String, dynamic> auctionData = json.decode(auctionResponse.body);
+      return auctionData;
     } else {
       // Handle error cases
       throw Exception('Failed to fetch image URL');
     }
   }
 
-  Future<List<dynamic>> fetchFixedImageUrls() async {
-    String apiUrlFixedPrice =
-        'http://127.0.0.1:5000/flutter_fixedPriceImageURLS';
+  Future<Map<String, dynamic>> fetchFixedData() async {
+    String apiUrlFixedPrice = 'http://127.0.0.1:5000/flutter_fixedPriceData';
 
     final fixedPriceResponse = await http.get(Uri.parse(apiUrlFixedPrice));
 
     if (fixedPriceResponse.statusCode == 200) {
-      List<dynamic> fixedPriceImageUrls = json.decode(fixedPriceResponse.body);
-      return fixedPriceImageUrls;
+      Map<String, dynamic> fixedPriceData =
+          json.decode(fixedPriceResponse.body);
+      return fixedPriceData;
     } else {
       // Handle error cases
       throw Exception('Failed to fetch image URLs');
@@ -102,9 +102,9 @@ class _MarketState extends State<Market> {
                     }
                   }
                   if (_selections[0]) {
-                    auctionImageUrls = fetchAuctionImageUrls();
+                    auctionData = fetchAuctionData();
                   } else {
-                    fixedPriceImageUrls = fetchFixedImageUrls();
+                    fixedPriceData = fetchFixedData();
                   }
                 });
               },
@@ -113,12 +113,12 @@ class _MarketState extends State<Market> {
           if (_selections[0])
             Expanded(
               flex: 8,
-              child: AuctionCardsList(auctionImageUrls),
+              child: AuctionCardsList(auctionData),
             )
           else
             Expanded(
               flex: 8,
-              child: FixedPriceCardsList(fixedPriceImageUrls),
+              child: FixedPriceCardsList(fixedPriceData),
             )
         ],
       ),
@@ -127,13 +127,13 @@ class _MarketState extends State<Market> {
 }
 
 class AuctionCardsList extends StatelessWidget {
-  final Future<List<dynamic>> auctionImageUrls;
-  const AuctionCardsList(this.auctionImageUrls);
+  final Future<Map<String, dynamic>> auctionData;
+  const AuctionCardsList(this.auctionData);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: auctionImageUrls,
+    return FutureBuilder<Map<String, dynamic>>(
+      future: auctionData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // Loading indicator while waiting
@@ -142,7 +142,9 @@ class AuctionCardsList extends StatelessWidget {
         } else if (!snapshot.hasData) {
           return const Text('No data available');
         } else {
-          List<dynamic> data = snapshot.data!;
+          Map<String, dynamic> data = snapshot.data!;
+          List<dynamic> urls = data['auction_image_urls'] ?? [];
+          List<dynamic> prices = data['price'] ?? [];
 
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -150,21 +152,22 @@ class AuctionCardsList extends StatelessWidget {
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
             ),
-            itemCount: data.length,
+            itemCount: urls.length,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                 onTap: () {
                   // Show card information when card is tapped
-                  _showAuctionInfo(context, data[index]);
+                  _showAuctionInfo(context, urls[index]);
                 },
                 child: Column(
                   children: [
                     Image.network(
-                      data[index],
+                      urls[index],
                       height: 200,
                       width: 200,
                       fit: BoxFit.fill,
                     ),
+                    Text('Price: ${prices[index]}'),
                   ],
                 ),
               ); //CardWidget(CardData(index), data[index]);
@@ -177,13 +180,13 @@ class AuctionCardsList extends StatelessWidget {
 }
 
 class FixedPriceCardsList extends StatelessWidget {
-  final Future<List<dynamic>> fixedPriceImageUrls;
-  const FixedPriceCardsList(this.fixedPriceImageUrls);
+  final Future<Map<String, dynamic>> fixedPriceData;
+  const FixedPriceCardsList(this.fixedPriceData);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: fixedPriceImageUrls,
+    return FutureBuilder<Map<String, dynamic>>(
+      future: fixedPriceData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // Loading indicator while waiting
@@ -192,7 +195,9 @@ class FixedPriceCardsList extends StatelessWidget {
         } else if (!snapshot.hasData) {
           return const Text('No data available');
         } else {
-          List<dynamic> data = snapshot.data!;
+          Map<String, dynamic> data = snapshot.data!;
+          List<dynamic> urls = data['fixed_price_image_urls'] ?? [];
+          List<dynamic> prices = data['price'] ?? [];
 
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -200,21 +205,22 @@ class FixedPriceCardsList extends StatelessWidget {
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
             ),
-            itemCount: data.length,
+            itemCount: urls.length,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                 onTap: () {
                   // Show card information when card is tapped
-                  _showFixedPriceInfo(context, data[index]);
+                  _showFixedPriceInfo(context, urls[index]);
                 },
                 child: Column(
                   children: [
                     Image.network(
-                      data[index],
+                      urls[index],
                       height: 200,
                       width: 200,
                       fit: BoxFit.fill,
                     ),
+                    Text('Price: ${prices[index]}'),
                   ],
                 ),
               ); //CardWidget(CardData(index), data[index]);
@@ -227,13 +233,13 @@ class FixedPriceCardsList extends StatelessWidget {
 }
 
 void _showAuctionInfo(BuildContext context, String imageUrl) async {
-  double _bidAmount = 0.0;
+  double bidAmount = 0.0;
+  print(imageUrl);
 
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return FutureBuilder<Map<String, dynamic>>(
-        // Replace this with your asynchronous operation to get card data
         future: fetchCardData(imageUrl),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -292,7 +298,7 @@ void _showAuctionInfo(BuildContext context, String imageUrl) async {
                   const SizedBox(height: 10),
                   TextField(
                       onChanged: (value) {
-                        _bidAmount = double.parse(value);
+                        bidAmount = double.parse(value);
                       },
                       decoration: kTextFieldDecoration.copyWith(
                         hintText: 'Enter your bid',
@@ -309,7 +315,7 @@ void _showAuctionInfo(BuildContext context, String imageUrl) async {
                 ElevatedButton(
                   onPressed: () {
                     // Add your purchase logic here
-                    _purchaseAuctionCard(context, imageUrl, _bidAmount);
+                    _purchaseAuctionCard(context, imageUrl, bidAmount);
                   },
                   child: const Text('Continue'),
                 ),
