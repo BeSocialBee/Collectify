@@ -15,26 +15,29 @@ class _MyCollectionState extends State<MyCollection> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.white,
       bottomNavigationBar: myBottomNavigationBar(),
       appBar: AppBar(
-        title: Text("Kart Listesi"),
+        title: Text("My Cards"),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // İki kart yan yana olacak
-          mainAxisSpacing: 8.0, // Dikey boşluk
-          crossAxisSpacing: 8.0, // Yatay boşluk
+      body: Padding(
+        padding: const EdgeInsets.only(right: 12.0, left: 12, top: 20),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // İki kart yan yana olacak
+            mainAxisSpacing: 15.0, // Dikey boşluk
+            crossAxisSpacing: 12.0, // Yatay boşluk
+          ),
+          itemCount: 20, // Listelenecek kart sayısı
+          itemBuilder: (context, index) {
+            // return GestureDetector(
+            //   onTap: () {
+            //     _navigateToCardDetails(context, cards[index]);
+            //   },
+              return CardWidget(cards[index], 'seb1.jpeg');
+            //);
+          },
         ),
-        itemCount: 20, // Listelenecek kart sayısı
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              _navigateToCardDetails(context, cards[index]);
-            },
-            child: CardWidget(cards[index], 'seb1.jpeg'),
-          );
-        },
       ),
     );
   }

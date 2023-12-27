@@ -1,126 +1,450 @@
-import 'package:collectify/screens/login_screen.dart';
-import 'package:collectify/widgets/bottom_navigation_bar.dart';
+import '/flutter_flow/flutter_flow_animations.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter/scheduler.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-class MyAccount extends StatefulWidget {
-  static String id = 'my_account_screen';
+
+class ProfilePageWidget extends StatefulWidget {
+  const ProfilePageWidget({Key? key}) : super(key: key);
 
   @override
-  State<MyAccount> createState() => _MyAccountState();
+  _ProfilePageWidgetState createState() => _ProfilePageWidgetState();
 }
 
-class _MyAccountState extends State<MyAccount> {
-  late Future<Map<String, dynamic>> userData;
+class _ProfilePageWidgetState extends State<ProfilePageWidget>
+    with TickerProviderStateMixin {
 
-  @override
-  void initState() {
-    super.initState();
-    // Fetch user data when the widget is initialized
-    userData = fetchUserData();
-  }
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future<Map<String, dynamic>> fetchUserData() async {
-    final response =
-        await http.get(Uri.parse('http://127.0.0.1:5000/userprofile'));
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> userData = json.decode(response.body);
-
-      return userData;
-    } else {
-      // If the server did not return a 200 OK response,
-      // throw an exception or handle the error as needed.
-      throw Exception('Failed to load user data');
-    }
-  }
+  
+  
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.yellow,
-        title: const Text('Collectify'),
-      ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: userData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No user data available'));
-          } else {
-            Map<String, dynamic> userData = snapshot.data!; // Access data here
+    
 
-            return ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                Image.network(
-                  userData['fileURL'][0],
-                  height: 200,
+    return GestureDetector(
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: Color(0xFFF1F4F8),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 200,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage('images/seb.jpeg')
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional(-1, 1),
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 16),
+                        child: Container(
+                          width: 90,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            color: Color(0x66249689),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Color(0xFF39D2C0),
+                              width: 2,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(4),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image(image: AssetImage('images/seb.jpeg'))
+                              // 
+                              // CachedNetworkImage(
+                              //   fadeInDuration: Duration(milliseconds: 500),
+                              //   fadeOutDuration: Duration(milliseconds: 500),
+                              //   imageUrl: '',
+                              //   width: 100,
+                              //   height: 100,
+                              //   fit: BoxFit.cover,
+                              // ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                child: Text(
+                  'Andrew D.',
+                  style: TextStyle(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF101213),
+                        fontSize: 32,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 4, 0, 16),
+                child: Text(
+                  'andrew@domainname.com',
+                  style: TextStyle(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF57636C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 4, 0, 0),
+                child: Text(
+                  'Your Account',
+                  style: TextStyle(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF57636C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+                child: Container(
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 1),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Icon(
+                          Icons.account_circle_outlined,
+                          color: Color(0xFF57636C),
+                          size: 24,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                          child: Text(
+                            'Edit Profile',
+                            style:
+                                TextStyle(
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF57636C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional(0.9, 0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF57636C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                UserInfoCard(
-                  title: "Username",
-                  value: userData['username'][0],
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+                child: Container(
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 1),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Icon(
+                          Icons.lock_open,
+                          color: Color(0xFF57636C),
+                          size: 24,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                          child: Text(
+                            'Change Password',
+                            style:
+                                TextStyle(
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF57636C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional(0.9, 0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF57636C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                UserInfoCard(
-                  title: "E-mail",
-                  value: userData['email'],
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+                child: Container(
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 1),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Icon(
+                          Icons.notifications_none,
+                          color: Color(0xFF57636C),
+                          size: 24,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                          child: Text(
+                            'Notification Settings',
+                            style:
+                                TextStyle(
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF57636C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional(0.9, 0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF57636C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                UserInfoCard(
-                  title: "Registration Date",
-                  value: userData['registration_date']
-                      [0], // Burayı gerçek bir tarih ile değiştirin
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 0, 0),
+                child: Text(
+                  'App Settings',
+                  style: TextStyle(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF57636C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
-                const SizedBox(
-                    height:
-                        16), // Add some spacing between the user info and the button
-                ElevatedButton(
-                  onPressed: () {
-                    // You can use Navigator.pop(context) to close the current screen
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
-                  },
-                  child: const Text('Exit'),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+                child: Container(
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 1),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Icon(
+                          Icons.help_outline_rounded,
+                          color: Color(0xFF57636C),
+                          size: 24,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                          child: Text(
+                            'Support',
+                            style:
+                                TextStyle(
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF57636C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional(0.9, 0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF57636C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            );
-          }
-        },
-      ),
-      backgroundColor: Colors.grey,
-      bottomNavigationBar: myBottomNavigationBar(),
-    );
-  }
-}
-
-class UserInfoCard extends StatelessWidget {
-  final String title;
-  final String value;
-
-  UserInfoCard({
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0), // Kenarları yuvarlatma
-      ),
-      elevation: 4, // Gölge efekti
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(value),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+                child: Container(
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 1),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Icon(
+                          Icons.privacy_tip_rounded,
+                          color: Color(0xFF57636C),
+                          size: 24,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                          child: Text(
+                            'Terms of Service',
+                            style:
+                                TextStyle(
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF57636C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional(0.9, 0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF57636C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional(0, 0),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 30),
+                  child: FFButtonWidget(
+                    onPressed: () {
+                      print('Button pressed ...');
+                    },
+                    text: 'Log Out',
+                    options: FFButtonOptions(
+                      width: 150,
+                      height: 44,
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      color: FlutterFlowTheme.of(context).accent3,
+                      textStyle: TextStyle(
+                            fontFamily: 'Outfit',
+                            color: Color(0xFF101213),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                      elevation: 0,
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(38),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

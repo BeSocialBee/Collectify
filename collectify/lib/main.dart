@@ -1,14 +1,17 @@
 import 'package:collectify/features/card_gallery.dart';
+import 'package:collectify/screens/achievements..dart';
 import 'package:collectify/screens/card_details.dart';
+import 'package:collectify/screens/card_in_auction.dart';
 import 'package:collectify/screens/card_info_screen.dart';
+import 'package:collectify/screens/card_sell_screen.dart';
 import 'package:collectify/screens/lb.dart';
 import 'package:collectify/screens/leaderboard.dart';
-import 'package:collectify/screens/login_screen.dart';
-import 'package:collectify/screens/main_page.dart';
+import 'package:collectify/screens/login.dart';
+import 'package:collectify/screens/home.dart';
 import 'package:collectify/screens/market.dart';
 import 'package:collectify/screens/my_account.dart';
 import 'package:collectify/screens/my_collections.dart';
-import 'package:collectify/screens/registration_screen.dart';
+import 'package:collectify/screens/sign_up.dart';
 import 'package:collectify/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,17 +26,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
       //home: LoginScreen(), //! Burayı değiştirebilirsiniz
       //* home: RegistrationScreen()
-      home: LeaderBoardScreen1(),
+      //home: Market(),
       //home: LeaderBoardScreen(),
       //home:MainPage(),
+      home: Home(),
       routes: {
-        MyAccount.id: (context) => MyAccount(),
-        MainPage.id: (context) => MainPage(),
-        Market.id: (context) => Market(),
-        MyCollection.id: (context) => MyCollection(),
-        CardDetailsPage.id: (context) => CardDetailsPage(),
+        // MainPage.id: (context) => MainPage(),
+        // Market.id: (context) => Market(),
+        // MyCollection.id: (context) => MyCollection(),
+        // CardDetailsPage.id: (context) => CardDetailsPage(),
       },
     );
   }
@@ -45,14 +50,13 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        bottomNavigationBar: myBottomNavigationBar(),
+        //bottomNavigationBar: myBottomNavigationBar(),
       ),
-      initialRoute: MainPage.id,
+      // initialRoute: MainPage.id,
       routes: {
-        MyAccount.id: (context) => MyAccount(),
-        MainPage.id: (context) => MainPage(),
-        Market.id: (context) => Market(),
-        MyCollection.id: (context) => MyCollection(),
+        // MainPage.id: (context) => MainPage(),
+        // Market.id: (context) => Market(),
+        // MyCollection.id: (context) => MyCollection(),
       },
     );
   }

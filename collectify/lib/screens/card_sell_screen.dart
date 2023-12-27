@@ -1,4 +1,6 @@
+import 'package:collectify/components/round_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CardSellPage extends StatefulWidget {
   @override
@@ -9,13 +11,13 @@ class _CardSellPageState extends State<CardSellPage>
     with TickerProviderStateMixin {
   double _auctionPrice = 50.0;
   double _quickSellPrice = 50.0;
+  int hours = 0;
 
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
 
-    return Column(
-      children: [
+    return Column(children: [
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
@@ -41,7 +43,7 @@ class _CardSellPageState extends State<CardSellPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Başlangıç Fiyatı:',
+                'Start Price:',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 30,
@@ -59,28 +61,59 @@ class _CardSellPageState extends State<CardSellPage>
                   });
                 },
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Text(
-                'Price: ${_auctionPrice.toStringAsFixed(1)}',
-                style: TextStyle(fontSize: 18),
+                '${_auctionPrice.toStringAsFixed(1)}',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundIconButton(
+                      iconWidget: FontAwesomeIcons.minus,
+                      onPressedButton: () {
+                        setState(() {
+                          if(hours != 0)
+                            hours--;
+                          else
+                            hours = hours;  
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    RoundIconButton(
+                      iconWidget: FontAwesomeIcons.plus,
+                      onPressedButton: () {
+                        setState(() {
+                          hours++;
+                        });
+                      },
+                    ),
+                    SizedBox(width: 50,),
+                    Text(
+                      '$hours',
+                      style:
+                          TextStyle(fontSize: 50, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 20,),
+                    Text(
+                      'Hours',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
-                child: Center(
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -93,17 +126,16 @@ class _CardSellPageState extends State<CardSellPage>
                       ),
                       elevation: 3,
                     ),
-                    child: Text('Satışı Tamamla'),
+                    child: Text('Sell'),
                   ),
                 ),
-              ),
             ],
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Satış Fiyatı',
+                'Price',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 30,
@@ -123,8 +155,8 @@ class _CardSellPageState extends State<CardSellPage>
               ),
               SizedBox(height: 20),
               Text(
-                'Price: ${_quickSellPrice.toStringAsFixed(1)}',
-                style: TextStyle(fontSize: 18),
+                '${_quickSellPrice.toStringAsFixed(1)}',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 20),
               Container(
@@ -155,7 +187,7 @@ class _CardSellPageState extends State<CardSellPage>
                       ),
                       elevation: 3,
                     ),
-                    child: Text('Satışı Tamamla'),
+                    child: Text('Sell'),
                   ),
                 ),
               ),
@@ -166,5 +198,3 @@ class _CardSellPageState extends State<CardSellPage>
     ]);
   }
 }
-
-

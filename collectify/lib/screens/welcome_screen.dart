@@ -1,5 +1,5 @@
-import '/screens/login_screen.dart';
-import '/screens/registration_screen.dart';
+import 'login.dart';
+import 'sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '/components/rounded_button.dart';
@@ -111,14 +111,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               colour: Colors.lightBlueAccent,
               buttonTitle: 'Log in',
               buttonCallback: () {
-                Navigator.pushNamed(context, LoginScreen.id);
+                //Navigator.pushNamed(context, LoginScreen.id);
               },
             ),
             RoundedButton(
               colour: Colors.blueAccent,
               buttonTitle: 'Register',
               buttonCallback: () {
-                Navigator.pushNamed(context, RegistrationScreen.id);
+                //Navigator.pushNamed(context, RegistrationScreen.id);
               },
             )
           ],
