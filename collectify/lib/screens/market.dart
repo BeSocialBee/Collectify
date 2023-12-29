@@ -8,14 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class ListProductsWidget extends StatefulWidget {
-  const ListProductsWidget({Key? key}) : super(key: key);
+class Market extends StatefulWidget {
+  const Market({Key? key}) : super(key: key);
 
   @override
   _ListProductsWidgetState createState() => _ListProductsWidgetState();
 }
 
-class _ListProductsWidgetState extends State<ListProductsWidget>
+class _ListProductsWidgetState extends State<Market>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   static String id = 'market_screen';
@@ -30,7 +30,7 @@ class _ListProductsWidgetState extends State<ListProductsWidget>
         ),
       );
     }
-  late TabController tabController;
+  late TabController tabController = TabController(length: 2, vsync: this);
     @override
   void initState() {
     super.initState();

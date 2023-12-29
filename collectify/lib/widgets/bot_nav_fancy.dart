@@ -1,3 +1,4 @@
+import 'package:collectify/widgets/bot_nav_dot.dart';
 import 'package:fancy_bottom_navigation_plus/fancy_bottom_navigation_plus.dart';
 import 'package:flutter/material.dart';
 
@@ -13,12 +14,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int currentpage = 0;
 
-  Center? _getpage(int page) {
+  Widget? _getpage(int page) {
     switch (page) {
       case 0:
-        return Center(
-          child: Text("Welcome to $page page"),
-        );
+        return Home();
       case 1:
         return Center(
           child: Text("Welcome to $page page"),
