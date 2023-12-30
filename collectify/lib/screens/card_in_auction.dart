@@ -215,7 +215,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          'Highest Bid: ',
+                          'Current Bid: ',
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             color: Colors.white,

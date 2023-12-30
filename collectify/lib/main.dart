@@ -11,14 +11,15 @@ import 'package:collectify/screens/home.dart';
 import 'package:collectify/screens/market.dart';
 import 'package:collectify/screens/my_account.dart';
 import 'package:collectify/screens/my_collections.dart';
+import 'package:collectify/screens/search.dart';
 import 'package:collectify/screens/sign_up.dart';
 import 'package:collectify/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:fancy_bottom_navigation_plus/fancy_bottom_navigation_plus.dart';
 import 'package:collectify/screens/market.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-
 
 void main() => runApp(const MyApp());
 
@@ -32,7 +33,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
 
-  
   Widget? _getpage(int _currentIndex) {
     switch (_currentIndex) {
       case 0:
@@ -40,10 +40,7 @@ class _MyAppState extends State<MyApp> {
       case 1:
         return Market();
       case 2:
-        return 
-        Center(
-          child: Text("Welcome to ${_currentIndex} page"),
-        );
+        return Search();
       case 3:
         return ProfilePageWidget();
       default:
@@ -53,9 +50,12 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: _getpage(_currentIndex),
         bottomNavigationBar: BottomNavyBar(
@@ -72,25 +72,30 @@ class _MyAppState extends State<MyApp> {
               textAlign: TextAlign.center,
             ),
             BottomNavyBarItem(
-              icon: Icon(Icons.people),
-              title: Text('Users'),
+              icon: LineIcon.shoppingCart(),
+              title: Text('Market'),
               activeColor: Colors.purpleAccent,
               textAlign: TextAlign.center,
             ),
             BottomNavyBarItem(
-              icon: Icon(Icons.message),
+              icon: Icon(Icons.search),
               title: Text(
-                'Messages test for mes teset test test ',
+                'Search',
               ),
               activeColor: Colors.pink,
               textAlign: TextAlign.center,
             ),
             BottomNavyBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings'),
+              icon: Icon(Icons.leaderboard),
+              title: Text('Ranks'),
               activeColor: Colors.blue,
               textAlign: TextAlign.center,
             ),
+            BottomNavyBarItem(
+              icon: Icon(Icons.card_travel),
+              title: Text('My Cards'),
+              activeColor: Colors.blue,
+              textAlign: TextAlign.center,)
           ],
         ),
       ),
@@ -104,8 +109,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        //bottomNavigationBar: myBottomNavigationBar(),
-      ),
+          //bottomNavigationBar: myBottomNavigationBar(),
+          ),
       // initialRoute: MainPage.id,
       routes: {
         // MainPage.id: (context) => MainPage(),

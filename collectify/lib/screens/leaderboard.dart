@@ -10,25 +10,7 @@ class LeaderBoardScreen1 extends StatefulWidget {
 class _LeaderBoardScreenState extends State<LeaderBoardScreen1> {
   List<dynamic> leaderboardData = [];
 
-  /*
-  Future<void> _fetchLeaderboardData() async {
-    var apiUrl = ''; 
-    var response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        leaderboardData = json.decode(response.body);
-      });
-    } else {
-      throw Exception('Failed to load leaderboard data');
-    }
-  }
-  @override
-  void initState() {
-    super.initState();
-    _fetchLeaderboardData();
-  }
-  */
+  
 
   @override
   Widget build(BuildContext context) {

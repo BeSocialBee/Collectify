@@ -1,3 +1,9 @@
+// Her kartın nadirliğini belirten bir değer -> Integer olabilir, mesela sıradan=1, nadir=2, destansı=3, efsanevi=4 ===== Başka bir şey de olabilir.
+// Kullanıcı adı
+// 
+
+
+
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
