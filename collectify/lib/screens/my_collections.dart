@@ -1,7 +1,15 @@
 import 'package:collectify/screens/card_info_screen.dart';
 import 'package:collectify/widgets/bottom_navigation_bar.dart';
+import '/flutter_flow/flutter_flow_button_tabbar.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import 'package:line_icons/line_icon.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:collectify/widgets/card.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MyCollection extends StatefulWidget {
   static String id = 'my_collection_screen';
@@ -12,43 +20,267 @@ class MyCollection extends StatefulWidget {
 class _MyCollectionState extends State<MyCollection> {
   final List<CardData> cards = List.generate(20, (index) => CardData(index));
 
+  late Future<List<dynamic>> userCards;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserCards();
+  }
+
+  // Define the getUserInfo function
+  Future<void> getUserCards() async {
+    try {
+      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+      var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+      print(userID);
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userCollections';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'userID': userID,
+        },
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        // Request successful, you can handle the response data here
+        Map<String, dynamic> responseData = json.decode(response.body);
+        print(responseData['cardData']);
+        userCards = responseData['cardData'];
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle errors, such as invalid credentials
+      print('Errorloading profile: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: myBottomNavigationBar(),
-      appBar: AppBar(
-        title: Text("My Cards"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(right: 12.0, left: 12, top: 20),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // İki kart yan yana olacak
-            mainAxisSpacing: 15.0, // Dikey boşluk
-            crossAxisSpacing: 12.0, // Yatay boşluk
+    return GestureDetector(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              'My Cards',
+              style: FlutterFlowTheme.of(context).titleLarge.override(
+                    fontFamily: 'Outfit',
+                    color: Color(0xFF14181B),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                  ),
+            ),
           ),
-          itemCount: 20, // Listelenecek kart sayısı
-          itemBuilder: (context, index) {
-            // return GestureDetector(
-            //   onTap: () {
-            //     _navigateToCardDetails(context, cards[index]);
-            //   },
-              return CardWidget(cards[index], 'seb1.jpeg');
-            //);
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                children: [
+                  Card(
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 22, right: 12),
+                      child: Container(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Text(
+                              '123',
+                              style: FlutterFlowTheme.of(context)
+                                  .titleLarge
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF14181B),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            LineIcon.coins(
+                              color: Colors.yellow,
+                              size: 30,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                  )
+                ],
+              ),
+            ),
+          ],
+          centerTitle: true,
+          elevation: 2,
+        ),
+        body: FutureBuilder<List<dynamic>>(
+          future: userCards,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text('No data available.'),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 4,
+                      crossAxisSpacing: 4,
+                      childAspectRatio: 0.8),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var card = snapshot.data![index];
+                    return Widget1(
+                      cardPrice: card['cardPrice'],
+                      cardUrl: card['cardURL'],
+                    );
+                  },
+                ),
+              );
+            }
           },
         ),
       ),
     );
   }
+}
 
-  void _navigateToCardDetails(BuildContext context, CardData card) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return CardDetailsPage();
-        },
+class Widget1 extends StatelessWidget {
+  final String? cardUrl;
+  final double? cardPrice;
+  //final String? cardId;
+
+  Widget1({
+    required this.cardPrice,
+    required this.cardUrl,
+    //required this.cardId, // Pass cardId in the constructor
+    super.key,
+  });
+
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) =>
+        //             ProductDetailsWidget())); // Constructer içine gerekli inputları yaz
+      },
+      child: Container(
+        height: 800,
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(3),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 9,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.network(
+                      '${cardUrl}',
+                      width: double.infinity,
+                      height: 190,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 6, 0, 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              '\$ $cardPrice',
+                              style: FlutterFlowTheme.of(context)
+                                  .headlineSmall
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF14181B),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        FFButtonWidget(
+                          onPressed: () {
+                            // await buy(this.cardId);
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             ProductDetailsWidget()));
+                          },
+                          text: 'Buy',
+                          options: FFButtonOptions(
+                            width: 70,
+                            height: 30,
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                            iconPadding:
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                            color: FlutterFlowTheme.of(context).tertiary,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  fontFamily: 'Outfit',
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                ),
+                            elevation: 3,
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -15,25 +14,11 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  late ForgotPassword01Model _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    super.initState();
-    _model = createModel(context, () => ForgotPassword01Model());
+  
 
-    _model.emailAddressController ??= TextEditingController();
-    _model.emailAddressFocusNode ??= FocusNode();
-  }
-
-  @override
-  void dispose() {
-    _model.dispose();
-
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +48,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             size: 30,
           ),
           onPressed: () async {
-            context.pop();
+            //context.pop();
           },
         ),
         title: Padding(
@@ -108,7 +93,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     hoverColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () async {
-                      context.safePop();
+                      //context.safePop();
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
@@ -168,8 +153,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 child: Container(
                   width: double.infinity,
                   child: TextFormField(
-                    controller: _model.emailAddressController,
-                    focusNode: _model.emailAddressFocusNode,
+                    controller: TextEditingController(),
+                    focusNode: FocusNode(),
                     autofillHints: [AutofillHints.email],
                     obscureText: false,
                     decoration: InputDecoration(
@@ -231,8 +216,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     maxLines: null,
                     keyboardType: TextInputType.emailAddress,
                     cursorColor: Color(0xFF6F61EF),
-                    validator: _model.emailAddressControllerValidator
-                        .asValidator(context),
+                    // validator: _model.emailAddressControllerValidator
+                    //     .asValidator(context),
                   ),
                 ),
               ),
@@ -242,20 +227,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () async {
-                      if (_model.emailAddressController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Email required!',
-                            ),
-                          ),
-                        );
-                        return;
-                      }
-                      await authManager.resetPassword(
-                        email: _model.emailAddressController.text,
-                        context: context,
-                      );
+                      // if (_model.emailAddressController.text.isEmpty) {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(
+                      //       content: Text(
+                      //         'Email required!',
+                      //       ),
+                      //     ),
+                      //   );
+                      //   return;
+                      // }
+                      // await authManager.resetPassword(
+                      //   email: _model.emailAddressController.text,
+                      //   context: context,
+                      // );
                     },
                     text: 'Send Link',
                     options: FFButtonOptions(

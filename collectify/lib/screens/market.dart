@@ -1,3 +1,5 @@
+import 'package:line_icons/line_icon.dart';
+
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -7,9 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'dart:html';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:line_icons/line_icons.dart';
+
 //import 'package:collectify/sharedpref_util.dart';
 
 class Market extends StatefulWidget {
@@ -56,14 +59,12 @@ class _ListProductsWidgetState extends State<Market>
     }
   }
 
-  late TabController tabController = TabController(length: 2, vsync: this);
-
   @override
   void initState() {
     super.initState();
     fixedPriceCards = getFixedMarket();
+    auctionCards = getAuctionMarket();
     print(fixedPriceCards);
-    tabController = TabController(length: 2, vsync: this);
 
     //auctionCards = getAuctionMarket();
   }
@@ -114,7 +115,7 @@ class _ListProductsWidgetState extends State<Market>
         // Request successful, you can handle the response data here
         List<dynamic> responseData = json.decode(response.body);
 
-        print(responseData);
+        print(response.statusCode);
         return responseData;
       } else {
         // Request failed, handle the error
@@ -136,6 +137,12 @@ class _ListProductsWidgetState extends State<Market>
         ),
       );
     }
+    late TabController tabController = TabController(length: 2, vsync: this);
+    @override
+    void initState() {
+      super.initState();
+      tabController = TabController(length: 2, vsync: this);
+    }
 
     @override
     void dispose() {
@@ -150,138 +157,66 @@ class _ListProductsWidgetState extends State<Market>
         appBar: AppBar(
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
-          leading: FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 60,
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: Color(0xFF14181B),
-              size: 30,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              'Market',
+              style: FlutterFlowTheme.of(context).titleLarge.override(
+                    fontFamily: 'Outfit',
+                    color: Color(0xFF14181B),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                  ),
             ),
-            onPressed: () async {
-              //   context.pushNamed(
-              //     'null',
-              //     extra: <String, dynamic>{
-              //       kTransitionInfoKey: TransitionInfo(
-              //         hasTransition: true,
-              //         transitionType: PageTransitionType.leftToRight,
-              //         duration: Duration(milliseconds: 220),
-              //       ),
-              //     },
-              //   );
-            },
           ),
-          title: Text(
-            'Categories',
-            style: FlutterFlowTheme.of(context).titleLarge.override(
-                  fontFamily: 'Outfit',
-                  color: Color(0xFF14181B),
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-          actions: [],
-          centerTitle: false,
-          elevation: 0,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 4),
+              child: Row(
+                children: [
+                  Card(
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 22, right: 12),
+                      child: Container(
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Text(
+                              '123',
+                              style: FlutterFlowTheme.of(context)
+                                  .titleLarge
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF14181B),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            LineIcon.coins(
+                              color: Colors.yellow,
+                              size: 30,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                  )
+                ],
+              ),
+            ),
+          ],
+          centerTitle: true,
+          elevation: 2,
         ),
         body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 12, 8, 0),
-                    child: TextFormField(
-                      controller: TextEditingController(),
-                      focusNode: FocusNode(),
-                      textCapitalization: TextCapitalization.words,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        labelText: 'Search for your shoes...',
-                        labelStyle:
-                            FlutterFlowTheme.of(context).labelMedium.override(
-                                  fontFamily: 'Plus Jakarta Sans',
-                                  color: Color(0xFF57636C),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                        hintStyle:
-                            FlutterFlowTheme.of(context).labelMedium.override(
-                                  fontFamily: 'Plus Jakarta Sans',
-                                  color: Color(0xFF57636C),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFFE0E3E7),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFF4B39EF),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFFFF5963),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFFFF5963),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFF1F4F8),
-                        contentPadding:
-                            EdgeInsetsDirectional.fromSTEB(24, 24, 20, 24),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Color(0xFF57636C),
-                          size: 16,
-                        ),
-                      ),
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Plus Jakarta Sans',
-                            color: Color(0xFF14181B),
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                          ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 12, 12, 0),
-                  child: FlutterFlowIconButton(
-                    borderColor: Colors.transparent,
-                    borderRadius: 30,
-                    borderWidth: 1,
-                    buttonSize: 50,
-                    icon: Icon(
-                      Icons.search_sharp,
-                      color: Color(0xFF14181B),
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      print('IconButton pressed ...');
-                    },
-                  ),
-                ),
-              ],
-            ),
             Expanded(
               child: Column(
                 children: [
@@ -322,28 +257,28 @@ class _ListProductsWidgetState extends State<Market>
                     ),
                   ),
                   Expanded(
-                    child: FutureBuilder<List<dynamic>>(
-                      future: fixedPriceCards,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error: ${snapshot.error}'),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Center(
-                            child: Text('No data available.'),
-                          );
-                        } else {
-                          return TabBarView(
-                            controller: tabController,
-                            children: [
-                              Padding(
+                    child: TabBarView(
+                      controller: tabController,
+                      children: [
+                        FutureBuilder<List<dynamic>>(
+                          future: auctionCards,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                child: Text('No data available.'),
+                              );
+                            } else {
+                              return Padding(
                                 padding: const EdgeInsets.only(top: 8),
                                 child: GridView.builder(
                                   gridDelegate:
@@ -362,31 +297,51 @@ class _ListProductsWidgetState extends State<Market>
                                     );
                                   },
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          mainAxisSpacing: 4,
-                                          crossAxisSpacing: 4,
-                                          childAspectRatio: 0.8),
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    var card = snapshot.data![index];
-                                    return Widget1(
-                                      cardPrice: card['cardPrice'],
-                                      cardUrl: card['cardURL'],
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                      },
+                              );
+                            }
+                          },
+                        ),
+                        FutureBuilder<List<dynamic>>(
+                            future: fixedPriceCards,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error: ${snapshot.error}'),
+                                );
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Center(
+                                  child: Text('No data available.'),
+                                );
+                              } else {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: GridView.builder(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            mainAxisSpacing: 4,
+                                            crossAxisSpacing: 4,
+                                            childAspectRatio: 0.8),
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      var card = snapshot.data![index];
+                                      return Widget1(
+                                        cardPrice: card['cardPrice'],
+                                        cardUrl: card['cardURL'],
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                            })
+                      ],
                     ),
                   ),
                 ],
@@ -526,7 +481,7 @@ class QuickBuyMarketCardDetails extends StatelessWidget {
 
 class Widget1 extends StatelessWidget {
   final String? cardUrl;
-  final double? cardPrice;
+  int cardPrice = 0;
   //final String? cardId;
 
   Widget1({
