@@ -1,6 +1,4 @@
-// Her kartın nadirliğini belirten bir değer -> Integer olabilir, mesela sıradan=1, nadir=2, destansı=3, efsanevi=4 ===== Başka bir şey de olabilir.
-// Kullanıcı adı
-//
+import 'dart:convert';
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -13,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -23,6 +22,67 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late Future<List<dynamic>> newListings;
+  late Future<List<dynamic>> mostVieweds;
+
+  @override
+  void initState() {
+    super.initState();
+    newListings = getNewListings();
+    print(newListings);
+
+    mostVieweds = getMostVieweds();
+    print(mostVieweds);
+  }
+
+  Future<List<dynamic>> getNewListings() async {
+    try {
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/newListings';
+      var response = await http.get(
+        Uri.parse(apiUrl),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse =
+            jsonDecode(response.body); // Decode the response body as a Map
+        final List<dynamic> jsonArray = jsonResponse['cardsData'] ??
+            []; // Access the "cardsData" key to get the array of cards
+        return jsonArray;
+      } else {
+        throw Exception(
+            'Failed to fetch cards.'); // Request failed, handle the error
+      }
+    } catch (e, stackTrace) {
+      print('Failed to fetch cards newwwss. Error: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to fetch cards newwwsslyy. Error: $e');
+    }
+  }
+
+  Future<List<dynamic>> getMostVieweds() async {
+    try {
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/mostVieweds';
+      var response = await http.get(
+        Uri.parse(apiUrl),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse =
+            jsonDecode(response.body); // Decode the response body as a Map
+        final List<dynamic> jsonArray = jsonResponse['cardsData'] ??
+            []; // Access the "cardsData" key to get the array of cards
+        return jsonArray;
+      } else {
+        throw Exception(
+            'Failed to fetch cards.'); // Request failed, handle the error
+      }
+    } catch (e, stackTrace) {
+      print('Failed to fetch cards newwwss. Error: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to fetch cards newwwsslyy. Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,79 +106,6 @@ class _HomeState extends State<Home> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 6, 16, 6),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            //context.pushNamed('ProfilePage');
-                          },
-                          child: Container(
-                            width: 53,
-                            height: 53,
-                            decoration: BoxDecoration(
-                              color: Color(0x4D9489F5),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Color(0xFF6F61EF),
-                                width: 2,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(2),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.network(
-                                  'https://picsum.photos/seed/626/600',
-                                  width: 300,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Welcome, Seyfullah',
-                          style: FlutterFlowTheme.of(context)
-                              .headlineMedium
-                              .override(
-                                fontFamily: 'Outfit',
-                                color: Color(0xFF15161E),
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
-                        child: FlutterFlowIconButton(
-                          borderColor: Colors.transparent,
-                          borderRadius: 20,
-                          buttonSize: 40,
-                          icon: Icon(
-                            Icons.notifications_none,
-                            color: Color(0xFF15161E),
-                            size: 24,
-                          ),
-                          onPressed: () {
-                            print('IconButton pressed ...');
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 StickyHeader(
                   overlapHeaders: false,
                   header: Container(
@@ -133,100 +120,78 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 12),
-                      child: Container(
-                        width: double.infinity,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 3,
-                              color: Color(0x33000000),
-                              offset: Offset(0, 1),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Color(0xFFE5E7EB),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(12, 0, 8, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Icon(
-                                Icons.search_rounded,
-                                color: Color(0xFF606A85),
-                                size: 24,
-                              ),
-                              Expanded(
+                      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(0, 6, 16, 6),
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                Navigator.pushNamed(context, '/MyAccount');
+                              },
+                              child: Container(
+                                width: 53,
+                                height: 53,
+                                decoration: BoxDecoration(
+                                  color: Color(0x4D9489F5),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Color(0xFF6F61EF),
+                                    width: 2,
+                                  ),
+                                ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      4, 0, 0, 0),
-                                  child: Container(
-                                    width: 200,
-                                    child: TextFormField(
-                                      controller: TextEditingController(),
-                                      focusNode: FocusNode(),
-                                      obscureText: false,
-                                      decoration: InputDecoration(
-                                        labelText: 'Search listings...',
-                                        labelStyle: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .override(
-                                              fontFamily: 'Outfit',
-                                              color: Color(0xFF606A85),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                        hintStyle: FlutterFlowTheme.of(context)
-                                            .labelMedium
-                                            .override(
-                                              fontFamily: 'Outfit',
-                                              color: Color(0xFF606A85),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        focusedErrorBorder: InputBorder.none,
-                                        filled: true,
-                                        fillColor: Colors.white,
-                                      ),
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Plus Jakarta Sans',
-                                            color: Color(0xFF15161E),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                      cursorColor: Color(0xFF6F61EF),
+                                  padding: EdgeInsets.all(2),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(
+                                      'https://picsum.photos/seed/626/600',
+                                      width: 300,
+                                      height: 200,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               ),
-                              FlutterFlowIconButton(
-                                borderColor: Color(0xFFE5E7EB),
-                                borderRadius: 10,
-                                borderWidth: 1,
-                                buttonSize: 40,
-                                fillColor: Colors.white,
-                                icon: Icon(
-                                  Icons.tune_rounded,
-                                  color: Color(0xFF15161E),
-                                  size: 24,
-                                ),
-                                onPressed: () {
-                                  print('IconButton pressed ...');
-                                },
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          Expanded(
+                            child: Text(
+                              'Welcome, Seyfullah',
+                              style: FlutterFlowTheme.of(context)
+                                  .headlineMedium
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF15161E),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
+                            child: FlutterFlowIconButton(
+                              borderColor: Colors.transparent,
+                              borderRadius: 20,
+                              buttonSize: 40,
+                              icon: Icon(
+                                Icons.notifications_none,
+                                color: Color(0xFF15161E),
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                print('IconButton pressed ...');
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -247,23 +212,49 @@ class _HomeState extends State<Home> {
                                   ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
-                        child: Container(
-                          width: double.infinity,
-                          height: 270,
-                          decoration: BoxDecoration(),
-                          child: ListView(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              NewListingCard(),
-                              NewListingCard(),
-                              NewListingCard(),
-                            ].divide(SizedBox(width: 16)),
-                          ),
-                        ),
-                      ),
+                      FutureBuilder(
+                          future: newListings,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                child: Text('No data available.'),
+                              );
+                            } else {
+                              print(snapshot.data!.length);
+                              return Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 270,
+                                  decoration: BoxDecoration(),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      var card = snapshot.data![index];
+                                      return NewListingCard(
+                                          cardName: card['cardTitle'],
+                                          cardPrice: card['cardPrice'],
+                                          cardUrl: card['cardURL']);
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                          }),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -288,21 +279,45 @@ class _HomeState extends State<Home> {
                                     ),
                               ),
                             ),
-                            Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 44),
-                              child: ListView(
-                                padding: EdgeInsets.zero,
-                                primary: false,
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                children: [
-                                  MostViewedCard(),
-                                  MostViewedCard(),
-                                  MostViewedCard(),
-                                ].divide(SizedBox(height: 12)),
-                              ),
-                            ),
+                            FutureBuilder(
+                                future: mostVieweds,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Center(
+                                      child: Text('No data available.'),
+                                    );
+                                  } else {
+                                    return Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 0, 0, 44),
+                                      child: ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        itemCount: snapshot.data!.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          var card = snapshot.data![index];
+                                          return MostViewedCard(
+                                              cardName: card['cardTitle'],
+                                              cardPrice: card['cardPrice'],
+                                              cardUrl: card['cardURL']);
+                                        },
+                                      ),
+                                    );
+                                  }
+                                })
                           ],
                         ),
                       ),
@@ -319,9 +334,15 @@ class _HomeState extends State<Home> {
 }
 
 class MostViewedCard extends StatelessWidget {
-  const MostViewedCard({
-    super.key,
-  });
+  final String cardName;
+  final String cardUrl;
+  final int cardPrice;
+
+  MostViewedCard(
+      {super.key,
+      required this.cardName,
+      required this.cardPrice,
+      required this.cardUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -357,7 +378,7 @@ class MostViewedCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        'https://images.unsplash.com/photo-1597475681177-809cfdc76cd2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmVhY2hob3VzZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+                        '$cardUrl',
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
@@ -416,7 +437,7 @@ class MostViewedCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                 child: Text(
-                  'Card Name',
+                  '$cardName',
                   style: FlutterFlowTheme.of(context).titleLarge.override(
                         fontFamily: 'Outfit',
                         color: Color(0xFF15161E),
@@ -436,7 +457,7 @@ class MostViewedCard extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '\$210',
+                            text: '\$ $cardPrice',
                             style: TextStyle(
                               color: Color(0xFF6F61EF),
                             ),
@@ -495,9 +516,15 @@ class MostViewedCard extends StatelessWidget {
 }
 
 class NewListingCard extends StatelessWidget {
-  const NewListingCard({
-    super.key,
-  });
+  final String cardName;
+  final String cardUrl;
+  final int cardPrice;
+
+  NewListingCard(
+      {super.key,
+      required this.cardName,
+      required this.cardPrice,
+      required this.cardUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -526,7 +553,7 @@ class NewListingCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        'https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YmVhY2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+                        '$cardUrl',
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
@@ -583,7 +610,7 @@ class NewListingCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                 child: Text(
-                  'Card Name',
+                  '$cardName',
                   style: FlutterFlowTheme.of(context).titleLarge.override(
                         fontFamily: 'Outfit',
                         color: Color(0xFF15161E),
@@ -599,7 +626,7 @@ class NewListingCard extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '\$421',
+                        text: '\$ $cardPrice',
                         style: TextStyle(
                           color: Color(0xFF6F61EF),
                         ),

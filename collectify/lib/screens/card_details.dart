@@ -8,9 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:collectify/utils/sharedpref_util.dart';
+import 'dart:convert';
 
 class CardDetails extends StatefulWidget {
-  const CardDetails({Key? key}) : super(key: key);
+  final String cardId;
+
+  const CardDetails({Key? key, required this.cardId}) : super(key: key);
 
   @override
   _CardDetailsState createState() => _CardDetailsState();
@@ -18,6 +23,18 @@ class CardDetails extends StatefulWidget {
 
 class _CardDetailsState extends State<CardDetails> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  static late String cardId;
+
+  late Future<Map<String, dynamic>> cardData;
+  late Future<Map<String, dynamic>> userData;
+
+  @override
+  void initState() {
+    super.initState();
+    cardId = widget.cardId;
+    cardData = getCardbyID(cardId);
+    userData = getUserInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,217 +68,273 @@ class _CardDetailsState extends State<CardDetails> {
           elevation: 2,
         ),
         body: SafeArea(
-          top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                child: Material(
-                  color: Colors.transparent,
-                  elevation: 30,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                    ),
-                  ),
-                  child: Container(
-                    width: 375,
-                    height: 406,
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).secondaryBackground,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      ),
-                    ),
-                    child: FlipCard(
-                      fill: Fill.fillBack,
-                      direction: FlipDirection.HORIZONTAL,
-                      speed: 400,
-                      front: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).tertiary,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
+            top: true,
+            child: FutureBuilder(
+              future: cardData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text('No data available.'),
+                  );
+                } else {
+                  var card = snapshot.data!;
+                  return Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                        child: Material(
+                          color: Colors.transparent,
+                          elevation: 30,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            ),
                           ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            'https://picsum.photos/seed/64/600',
-                            width: 300,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      back: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).tertiary,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                              child: Text(
-                                'Card Name',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Outfit',
-                                      fontSize: 30,
-                                    ),
+                          child: Container(
+                            width: 375,
+                            height: 406,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
                               ),
                             ),
-                            Padding(
+                            child: FlipCard(
+                              fill: Fill.fillBack,
+                              direction: FlipDirection.HORIZONTAL,
+                              speed: 400,
+                              front: Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context).tertiary,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    '${card['cardURL']}',
+                                    width: 300,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              back: Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context).tertiary,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 10, 0, 0),
+                                      child: Text(
+                                        '${card['cardTitle']}',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Outfit',
+                                              fontSize: 30,
+                                            ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 20, 0, 0),
+                                      child: Text(
+                                        '',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      FutureBuilder(
+                        future: userData,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text('Error: ${snapshot.error}'),
+                            );
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Center(
+                              child: Text('No data available.'),
+                            );
+                          } else {
+                            return Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                              child: Text(
-                                '',
-                                style: FlutterFlowTheme.of(context).bodyMedium,
+                              child: Container(
+                                width: 345,
+                                height: 78,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    FFButtonWidget(
+                                      onPressed: () async {
+                                        await showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          backgroundColor: Colors.transparent,
+                                          enableDrag: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return GestureDetector(
+                                              // onTap: () => _model.unfocusNode.canRequestFocus
+                                              //     ? FocusScope.of(context)
+                                              //         .requestFocus(_model.unfocusNode)
+                                              //     : FocusScope.of(context).unfocus(),
+                                              child: Padding(
+                                                padding:
+                                                    MediaQuery.viewInsetsOf(
+                                                        context),
+                                                child: Container(
+                                                  height: 175,
+                                                  child: QuickSellWidget(),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ).then((value) => safeSetState(() {}));
+                                      },
+                                      text: 'Quick Sell',
+                                      options: FFButtonOptions(
+                                        height: 40,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            24, 0, 24, 0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 0, 0, 0),
+                                        color: FlutterFlowTheme.of(context)
+                                            .primary,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily: 'Outfit',
+                                              color: Colors.white,
+                                            ),
+                                        elevation: 3,
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    FFButtonWidget(
+                                      onPressed: () async {
+                                        await showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          backgroundColor: Colors.transparent,
+                                          enableDrag: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return GestureDetector(
+                                              // onTap: () => _model.unfocusNode.canRequestFocus
+                                              //     ? FocusScope.of(context)
+                                              //         .requestFocus(_model.unfocusNode)
+                                              //     : FocusScope.of(context).unfocus(),
+                                              child: Padding(
+                                                padding:
+                                                    MediaQuery.viewInsetsOf(
+                                                        context),
+                                                child: Container(
+                                                  height: 300,
+                                                  child: SellInAuctionWidget(),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ).then((value) => safeSetState(() {}));
+                                      },
+                                      text: 'Auction',
+                                      options: FFButtonOptions(
+                                        height: 40,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            24, 0, 24, 0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 0, 0, 0),
+                                        color: FlutterFlowTheme.of(context)
+                                            .primary,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily: 'Outfit',
+                                              color: Colors.white,
+                                            ),
+                                        elevation: 3,
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                child: Container(
-                  width: 345,
-                  height: 78,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      FFButtonWidget(
-                        onPressed: () async {
-                          await showModalBottomSheet(
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            enableDrag: false,
-                            context: context,
-                            builder: (context) {
-                              return GestureDetector(
-                                // onTap: () => _model.unfocusNode.canRequestFocus
-                                //     ? FocusScope.of(context)
-                                //         .requestFocus(_model.unfocusNode)
-                                //     : FocusScope.of(context).unfocus(),
-                                child: Padding(
-                                  padding: MediaQuery.viewInsetsOf(context),
-                                  child: Container(
-                                    height: 175,
-                                    child: QuickSellWidget(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ).then((value) => safeSetState(() {}));
+                            );
+                          }
                         },
-                        text: 'Quick Sell',
-                        options: FFButtonOptions(
-                          height: 40,
-                          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                          iconPadding:
-                              EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                          color: FlutterFlowTheme.of(context).primary,
-                          textStyle:
-                              FlutterFlowTheme.of(context).titleSmall.override(
-                                    fontFamily: 'Outfit',
-                                    color: Colors.white,
-                                  ),
-                          elevation: 3,
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      FFButtonWidget(
-                        onPressed: () async {
-                          await showModalBottomSheet(
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            enableDrag: false,
-                            context: context,
-                            builder: (context) {
-                              return GestureDetector(
-                                // onTap: () => _model.unfocusNode.canRequestFocus
-                                //     ? FocusScope.of(context)
-                                //         .requestFocus(_model.unfocusNode)
-                                //     : FocusScope.of(context).unfocus(),
-                                child: Padding(
-                                  padding: MediaQuery.viewInsetsOf(context),
-                                  child: Container(
-                                    height: 300,
-                                    child: SellInAuctionWidget(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ).then((value) => safeSetState(() {}));
-                        },
-                        text: 'Auction',
-                        options: FFButtonOptions(
-                          height: 40,
-                          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                          iconPadding:
-                              EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                          color: FlutterFlowTheme.of(context).primary,
-                          textStyle:
-                              FlutterFlowTheme.of(context).titleSmall.override(
-                                    fontFamily: 'Outfit',
-                                    color: Colors.white,
-                                  ),
-                          elevation: 3,
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+                  );
+                }
+              },
+            )),
       ),
     );
   }
@@ -276,8 +349,11 @@ class SellInAuctionWidget extends StatefulWidget {
 
 class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
   double sliderValue = 0;
-  int hour = 1;
-  int minute = 0;
+  int hour = 0;
+  int minute = 1;
+  late Future<Map<String, dynamic>> cardData;
+  late Future<Map<String, dynamic>> userData;
+  late Future<Map<String, dynamic>> makeAuctionData;
 
   @override
   Widget build(BuildContext context) {
@@ -313,8 +389,10 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
                     child: Slider(
                       activeColor: FlutterFlowTheme.of(context).primary,
                       inactiveColor: FlutterFlowTheme.of(context).alternate,
-                      min: 0,
-                      max: 100,
+                      min:
+                          0, // ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BURAYA KARTIN FİYATINDAN 10 FALAN FAZLA YAZABİLİRSİN
+                      max:
+                          100, // ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BURASI user.balance OLCAK YUKARDA USER BİLGİLERİNİ ALDIM
                       value: sliderValue, // _model.sliderValue ??= 5,
                       onChanged: (newValue) {
                         newValue = double.parse(newValue.toStringAsFixed(2));
@@ -372,12 +450,10 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
                     ),
                     onPressed: () {
                       setState(() {
-
-                      if (hour == 1) {
-                      } else {
-                        hour--;
-                      }
-                        
+                        if (hour == 0) {
+                        } else {
+                          hour--;
+                        }
                       });
                     },
                   ),
@@ -442,7 +518,7 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Duration in Hours: ',
+                  'Duration in Minutes: ',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Outfit',
                         fontSize: 16,
@@ -463,12 +539,10 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
                     ),
                     onPressed: () {
                       setState(() {
-
-                      if (minute == 0) {
-                      } else {
-                        minute--;
-                      }
-                        
+                        if (minute == 1) {
+                        } else {
+                          minute--;
+                        }
                       });
                     },
                   ),
@@ -518,12 +592,9 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
                     ),
                     onPressed: () {
                       setState(() {
-                        if(minute == 59){
-
-                        }
-                        else{
+                        if (minute == 59) {
+                        } else {
                           minute++;
-
                         }
                       });
                     },
@@ -536,9 +607,12 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(0, 25, 0, 0),
             child: FFButtonWidget(
               onPressed: () async {
+                makeAuctionData = MakeAuction(
+                    _CardDetailsState.cardId, hour, minute, sliderValue);
+
                 Navigator.pop(context);
               },
-              text: 'Button',
+              text: 'Ok',
               options: FFButtonOptions(
                 height: 40,
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
@@ -572,6 +646,8 @@ class QuickSellWidget extends StatefulWidget {
 
 class _QuickSellWidgetState extends State<QuickSellWidget> {
   double sliderValue = 0;
+  late Future<Map<String, dynamic>> cardData;
+  late Future<Map<String, dynamic>> userData;
 
   @override
   Widget build(BuildContext context) {
@@ -666,5 +742,112 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
         ],
       ),
     );
+  }
+}
+
+Future<Map<String, dynamic>> getCardbyID(cardId) async {
+  try {
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getCardbyId';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'cardId': cardId,
+      },
+    );
+
+    // Check the response status
+    if (response.statusCode == 200) {
+      //print(response.body);
+      // Request successful, you can handle the response data here
+      final Map<String, dynamic> jsonResponse =
+          jsonDecode(response.body); // Decode the response body as a Map
+      final Map<String, dynamic> jsonArray = jsonResponse['cardData'] ??
+          []; // Access the "cardsData" key to get the array of cards
+      return jsonArray;
+    } else {
+      // Request failed, handle the error
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get card data');
+    }
+  } catch (e) {
+    // Handle errors, such as invalid credentials
+    print('Errorloading profile: $e');
+    throw Exception('Failed to get card data');
+  }
+}
+
+Future<Map<String, dynamic>> MakeAuction(
+    cardId, hour, minute, bidAmount) async {
+  try {
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+    print("auctiooooooonnnnn");
+
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userProfileInfo';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'userID': userID,
+        'cardId': cardId,
+      },
+    );
+
+    // Check the response status
+    if (response.statusCode == 200) {
+      //print(response.body);
+      // Request successful, you can handle the response data here
+      final Map<String, dynamic> jsonResponse =
+          jsonDecode(response.body); // Decode the response body as a Map
+      final Map<String, dynamic> jsonArray = jsonResponse['usersData'] ??
+          []; // Access the "cardsData" key to get the array of cards
+      print(jsonArray);
+      return jsonArray;
+    } else {
+      // Request failed, handle the error
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get card data');
+    }
+  } catch (e) {
+    // Handle errors, such as invalid credentials
+    print('Errorloading profile: $e');
+    throw Exception('Failed to get card data');
+  }
+}
+
+Future<Map<String, dynamic>> getUserInfo() async {
+  try {
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userProfileInfo';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'userID': userID,
+      },
+    );
+
+    // Check the response status
+    if (response.statusCode == 200) {
+      //print(response.body);
+      // Request successful, you can handle the response data here
+      final Map<String, dynamic> jsonResponse =
+          jsonDecode(response.body); // Decode the response body as a Map
+      final Map<String, dynamic> jsonArray = jsonResponse['usersData'] ??
+          []; // Access the "cardsData" key to get the array of cards
+      return jsonArray;
+    } else {
+      // Request failed, handle the error
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get card data');
+    }
+  } catch (e) {
+    // Handle errors, such as invalid credentials
+    print('Errorloading profile: $e');
+    throw Exception('Failed to get card data');
   }
 }

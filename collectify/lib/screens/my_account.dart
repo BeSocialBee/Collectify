@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -20,14 +22,73 @@ class _MyAccountState extends State<MyAccount>
     with TickerProviderStateMixin {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  String username ="";
+  String email ="";
+  String avatar_id ="";
+  int balance = 0;
+  int score = 0;
 
-  
-  
+  @override
+  void initState() {
+    super.initState();
+    getUserInfo();
+  }
+
+
+
+  // Define the getUserInfo function
+  Future<void> getUserInfo() async {
+    try {
+      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+      var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+      print(userID);
+      String apiUrl = 'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userProfileInfo';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'userID': userID,
+        },
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        //print(response.body);
+        // Request successful, you can handle the response data here
+        Map<String, dynamic> responseData = json.decode(response.body);
+        username = responseData['usersData']['username'];
+        email = responseData['usersData']['email'];
+        avatar_id = responseData['usersData']['avatar_id'];
+        balance = responseData['usersData']['balance'];
+        score = responseData['usersData']['score'];
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle errors, such as invalid credentials
+      print('Errorloading profile: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    
+    return FutureBuilder<void>(
+      future: getUserInfo(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator()); // or another loading indicator
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return buildProfilePage();
+        }
+      },
+    );
+  }
 
+
+  
+  Widget buildProfilePage() {
     return GestureDetector(
       child: Scaffold(
         key: scaffoldKey,
@@ -40,7 +101,7 @@ class _MyAccountState extends State<MyAccount>
                 height: 200,
                 child: Stack(
                   children: [
-                    Container(
+                    /* Container(
                       width: double.infinity,
                       height: 140,
                       decoration: BoxDecoration(
@@ -50,7 +111,7 @@ class _MyAccountState extends State<MyAccount>
                           image: AssetImage('images/seb.jpeg')
                         ),
                       ),
-                    ),
+                    ), */
                     Align(
                       alignment: AlignmentDirectional(-1, 1),
                       child: Padding(
@@ -70,7 +131,7 @@ class _MyAccountState extends State<MyAccount>
                             padding: EdgeInsets.all(4),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(50),
-                              child: Image(image: AssetImage('images/seb.jpeg'))
+                              child: Image(image: AssetImage(avatar_id))
                               // 
                               // CachedNetworkImage(
                               //   fadeInDuration: Duration(milliseconds: 500),
@@ -91,7 +152,7 @@ class _MyAccountState extends State<MyAccount>
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
                 child: Text(
-                  'Andrew D.',
+                  username,
                   style: TextStyle(
                         fontFamily: 'Outfit',
                         color: Color(0xFF101213),
@@ -102,8 +163,33 @@ class _MyAccountState extends State<MyAccount>
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 4, 0, 16),
+                child: Row(
+                  children: [
+                    Text(
+                      'Balance: ',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF57636C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      '$balance', // Use the balance variable
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF57636C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 4, 0, 16),
                 child: Text(
-                  'andrew@domainname.com',
+                  email,
                   style: TextStyle(
                         fontFamily: 'Outfit',
                         color: Color(0xFF57636C),
@@ -447,5 +533,17 @@ class _MyAccountState extends State<MyAccount>
         ),
       ),
     );
+  }
+}
+
+class SharedPreferencesUtil {
+  static Future<void> saveUserIdToLocalStorage(String userID) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userID', userID);
+  }
+
+  static Future<String?> loadUserIdFromLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userID');
   }
 }

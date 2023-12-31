@@ -43,8 +43,10 @@ class _MyAppState extends State<MyApp> {
         return Search();
       case 3:
         return LeaderBoardScreen1();
+      case 4:
+        return MyCollection();
       // case 4:
-      //   return MyCollection();
+      //   return MyAccount();
       default:
         return Center(
           child: Text("Welcome to ${_currentIndex} page"),
