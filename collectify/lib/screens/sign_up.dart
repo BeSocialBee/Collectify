@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -12,22 +11,71 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:crypto/crypto.dart';
+import 'package:http/http.dart' as http;
 
 
-
-class Auth2CreateWidget extends StatefulWidget {
-  const Auth2CreateWidget({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _Auth2CreateWidgetState createState() => _Auth2CreateWidgetState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
+class _SignUpScreenState extends State<SignUpScreen>
     with TickerProviderStateMixin {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   static String id = 'sign_up_screen';
+
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  String emailValue ="";
+  String passwordValue ="";
+  String hashPassword="";
+
+
+  // Define the signUp function
+  Future<void> signUp() async {
+    try {
+
+      String apiUrl = 'https://nliqxp1fz0.execute-api.us-east-1.amazonaws.com/loginstage/signup';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'email': emailValue,
+          'password': passwordValue,
+        },
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        // Request successful, you can handle the response data here
+        print('Response data: ${response.body}');
+
+        ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ///  !!!!!!!!!!!!! BURDA LOGIN YONLENDIR !!!!!!!!!!!!!
+        ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Navigator.pushReplacementNamed(context, "/Signup");
+        
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.body}');
+        
+        ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ///  burda neden hata olduğu kullanııcya gösterilebilir response.body i variable a atayarak
+        ///  eğer 6 haneden küçükse password -> Error response: {"message":"auth/weak-password"}
+        ///  eğer aynı gmail varsa -> Error response: {"message":"auth/email-already-in-use"} 
+        ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      }
+    } catch (e) {
+      // Handle sign-in errors, such as invalid credentials
+      print('Error singing up: $e');
+    }
+  }
+
 
   final animationsMap = {
     'containerOnPageLoadAnimation': AnimationInfo(
@@ -107,7 +155,7 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 70, 0, 32),
                   child: Container(
-                    width: 200,
+                    width: 220,
                     height: 70,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
@@ -184,7 +232,7 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                               child: Container(
                                 width: double.infinity,
                                 child: TextFormField(
-                                  controller: TextEditingController(),
+                                  controller: emailController,
                                   focusNode: FocusNode(),
                                   autofocus: true,
                                   autofillHints: [AutofillHints.email],
@@ -234,11 +282,16 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                                   cursorColor:
                                       FlutterFlowTheme.of(context).primary,
                                   validator:(value) {
-                                    
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a value'; // Return an error message if the value is empty
+                                    }
                                   },
                                   onSaved: (newValue) {
                                     
-                                  }    
+                                  },
+                                  onChanged: (value){
+                                    emailValue = emailController.text;
+                                  } 
                                 ),
                               ),
                             ),
@@ -248,7 +301,7 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                               child: Container(
                                 width: double.infinity,
                                 child: TextFormField(
-                                  controller: TextEditingController(),
+                                  controller: passwordController,
                                   focusNode: FocusNode(),
                                   autofocus: true,
                                   autofillHints: [AutofillHints.password],
@@ -311,6 +364,17 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                                   style: FlutterFlowTheme.of(context).bodyLarge,
                                   cursorColor:
                                       FlutterFlowTheme.of(context).primary,
+                                  validator:(value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a value'; // Return an error message if the value is empty
+                                    }
+                                  },
+                                  onSaved: (newValue) {
+
+                                  },  
+                                  onChanged: (value){
+                                    passwordValue = passwordController.text;
+                                  } 
                                 ),
                               ),
                             ),
@@ -319,6 +383,8 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                               child: FFButtonWidget(
                                 onPressed: () async {
+                                  // Call the signUp function
+                                  await signUp();
                                 },
                                 text: 'Create Account',
                                 options: FFButtonOptions(
@@ -370,17 +436,7 @@ class _Auth2CreateWidgetState extends State<Auth2CreateWidget>
                                   hoverColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
-                                    // context.pushNamed(
-                                    //   'auth_2_Login',
-                                    //   extra: <String, dynamic>{
-                                    //     kTransitionInfoKey: TransitionInfo(
-                                    //       hasTransition: true,
-                                    //       transitionType:
-                                    //           PageTransitionType.fade,
-                                    //       duration: Duration(milliseconds: 200),
-                                    //     ),
-                                    //   },
-                                    // );
+                                    Navigator.pushReplacementNamed(context, '/Login');
                                   },
                                   child: RichText(
                                     textScaleFactor:

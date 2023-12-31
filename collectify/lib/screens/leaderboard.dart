@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:line_icons/line_icon.dart';
+import '/flutter_flow/flutter_flow_button_tabbar.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
 
 class LeaderBoardScreen1 extends StatefulWidget {
   @override
@@ -14,21 +20,26 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: const Icon(
-          Icons.arrow_back_ios,
-          color: Colors.white,
-        ),
-        actions: [
-          const Icon(
-            Icons.grid_view,
-            color: Colors.white,
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              'Leaderboard',
+              style: FlutterFlowTheme.of(context).titleLarge.override(
+                    fontFamily: 'Outfit',
+                    color: Color(0xFF14181B),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                  ),
+            ),
           ),
-        ],
-      ),
+          
+          centerTitle: true,
+          elevation: 2,
+        ),
       body: //leaderboardData.isEmpty
           // ? Center(child: CircularProgressIndicator()):
           SingleChildScrollView(

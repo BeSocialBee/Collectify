@@ -42,7 +42,9 @@ class _MyAppState extends State<MyApp> {
       case 2:
         return Search();
       case 3:
-        return ProfilePageWidget();
+        return LeaderBoardScreen1();
+      // case 4:
+      //   return MyCollection();
       default:
         return Center(
           child: Text("Welcome to ${_currentIndex} page"),
@@ -55,6 +57,16 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        "/Login":(context) => LoginScreen(),
+        "/Signup":(context) => SignUpScreen(),
+        "/MyCollection":(context) => MyCollection(),
+        "/Market":(context) => Market(),
+        "/Leaderboard":(context) => LeaderBoardScreen1(),
+        "/MyAccount":(context) => MyAccount(),
+
+      },
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: _getpage(_currentIndex),

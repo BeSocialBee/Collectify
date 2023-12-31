@@ -1,9 +1,3 @@
-// Kullanıcı adı
-// Email
-// Avatar
-// Şifre 
-
-
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -15,14 +9,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 
-class ProfilePageWidget extends StatefulWidget {
-  const ProfilePageWidget({Key? key}) : super(key: key);
+class MyAccount extends StatefulWidget {
+  const MyAccount({Key? key}) : super(key: key);
 
   @override
-  _ProfilePageWidgetState createState() => _ProfilePageWidgetState();
+  _MyAccountState createState() => _MyAccountState();
 }
 
-class _ProfilePageWidgetState extends State<ProfilePageWidget>
+class _MyAccountState extends State<MyAccount>
     with TickerProviderStateMixin {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();

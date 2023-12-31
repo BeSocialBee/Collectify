@@ -1,8 +1,6 @@
 // Her kartın nadirliğini belirten bir değer -> Integer olabilir, mesela sıradan=1, nadir=2, destansı=3, efsanevi=4 ===== Başka bir şey de olabilir.
 // Kullanıcı adı
-// 
-
-
+//
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -24,10 +22,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  
   @override
   Widget build(BuildContext context) {
     if (isiOS) {
@@ -57,26 +53,35 @@ class _HomeState extends State<Home> {
                     children: [
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 6, 16, 6),
-                        child: Container(
-                          width: 53,
-                          height: 53,
-                          decoration: BoxDecoration(
-                            color: Color(0x4D9489F5),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Color(0xFF6F61EF),
-                              width: 2,
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            //context.pushNamed('ProfilePage');
+                          },
+                          child: Container(
+                            width: 53,
+                            height: 53,
+                            decoration: BoxDecoration(
+                              color: Color(0x4D9489F5),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Color(0xFF6F61EF),
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(2),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Image.network(
-                                'https://picsum.photos/seed/626/600',
-                                width: 300,
-                                height: 200,
-                                fit: BoxFit.cover,
+                            child: Padding(
+                              padding: EdgeInsets.all(2),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Image.network(
+                                  'https://picsum.photos/seed/626/600',
+                                  width: 300,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
@@ -321,8 +326,7 @@ class MostViewedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(
-          16, 0, 16, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Container(
         width: 220,
         height: 240,
@@ -345,16 +349,13 @@ class MostViewedCard extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Stack(
                   children: [
                     ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(
-                              8),
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.network(
                         'https://images.unsplash.com/photo-1597475681177-809cfdc76cd2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmVhY2hob3VzZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
                         width: double.infinity,
@@ -363,70 +364,42 @@ class MostViewedCard extends StatelessWidget {
                       ),
                     ),
                     Align(
-                      alignment:
-                          AlignmentDirectional(
-                              1, -1),
+                      alignment: AlignmentDirectional(1, -1),
                       child: Padding(
-                        padding:
-                            EdgeInsetsDirectional
-                                .fromSTEB(
-                                    0, 8, 8, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
                         child: ClipRRect(
-                          borderRadius:
-                              BorderRadius
-                                  .circular(12),
+                          borderRadius: BorderRadius.circular(12),
                           child: BackdropFilter(
-                            filter:
-                                ImageFilter.blur(
+                            filter: ImageFilter.blur(
                               sigmaX: 5,
                               sigmaY: 2,
                             ),
                             child: Row(
-                              mainAxisSize:
-                                  MainAxisSize
-                                      .min,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
                                   height: 32,
-                                  decoration:
-                                      BoxDecoration(
-                                    color: Color(
-                                        0x9AFFFFFF),
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                                12),
-                                    border: Border
-                                        .all(
-                                      color: Color(
-                                          0xFFE5E7EB),
+                                  decoration: BoxDecoration(
+                                    color: Color(0x9AFFFFFF),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Color(0xFFE5E7EB),
                                       width: 2,
                                     ),
                                   ),
-                                  alignment:
-                                      AlignmentDirectional(
-                                          0, 0),
+                                  alignment: AlignmentDirectional(0, 0),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional
-                                        .fromSTEB(
-                                            8,
-                                            0,
-                                            8,
-                                            0),
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8, 0, 8, 0),
                                     child: Text(
                                       'Legendary',
-                                      style: FlutterFlowTheme.of(
-                                              context)
+                                      style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily:
-                                                'Plus Jakarta Sans',
-                                            color:
-                                                Color(0xFF15161E),
-                                            fontSize:
-                                                14,
-                                            fontWeight:
-                                                FontWeight.w500,
+                                            fontFamily: 'Plus Jakarta Sans',
+                                            color: Color(0xFF15161E),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                     ),
                                   ),
@@ -441,84 +414,59 @@ class MostViewedCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional
-                    .fromSTEB(0, 8, 0, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                 child: Text(
                   'Card Name',
-                  style:
-                      FlutterFlowTheme.of(context)
-                          .titleLarge
-                          .override(
-                            fontFamily: 'Outfit',
-                            color:
-                                Color(0xFF15161E),
-                            fontSize: 22,
-                            fontWeight:
-                                FontWeight.w500,
-                          ),
+                  style: FlutterFlowTheme.of(context).titleLarge.override(
+                        fontFamily: 'Outfit',
+                        color: Color(0xFF15161E),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment:
-                    MainAxisAlignment
-                        .spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional
-                        .fromSTEB(0, 4, 0, 8),
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
                     child: RichText(
-                      textScaleFactor:
-                          MediaQuery.of(context)
-                              .textScaleFactor,
+                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
                       text: TextSpan(
                         children: [
                           TextSpan(
                             text: '\$210',
                             style: TextStyle(
-                              color: Color(
-                                  0xFF6F61EF),
+                              color: Color(0xFF6F61EF),
                             ),
                           ),
                           TextSpan(
                             text: ' ',
-                            style: FlutterFlowTheme
-                                    .of(context)
+                            style: FlutterFlowTheme.of(context)
                                 .labelSmall
                                 .override(
-                                  fontFamily:
-                                      'Outfit',
-                                  color: Color(
-                                      0xFF606A85),
+                                  fontFamily: 'Outfit',
+                                  color: Color(0xFF606A85),
                                   fontSize: 12,
-                                  fontWeight:
-                                      FontWeight
-                                          .w500,
+                                  fontWeight: FontWeight.w500,
                                 ),
                           )
                         ],
-                        style: FlutterFlowTheme
-                                .of(context)
-                            .labelMedium
-                            .override(
-                              fontFamily:
-                                  'Outfit',
-                              color: Color(
-                                  0xFF606A85),
-                              fontSize: 14,
-                              fontWeight:
-                                  FontWeight.w500,
-                            ),
+                        style:
+                            FlutterFlowTheme.of(context).labelMedium.override(
+                                  fontFamily: 'Outfit',
+                                  color: Color(0xFF606A85),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional
-                        .fromSTEB(0, 4, 0, 8),
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
                     child: RichText(
-                      textScaleFactor:
-                          MediaQuery.of(context)
-                              .textScaleFactor,
+                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
                       text: TextSpan(
                         children: [
                           TextSpan(
@@ -526,18 +474,13 @@ class MostViewedCard extends StatelessWidget {
                             style: TextStyle(),
                           )
                         ],
-                        style: FlutterFlowTheme
-                                .of(context)
-                            .labelMedium
-                            .override(
-                              fontFamily:
-                                  'Outfit',
-                              color: Color(
-                                  0xFF606A85),
-                              fontSize: 14,
-                              fontWeight:
-                                  FontWeight.w500,
-                            ),
+                        style:
+                            FlutterFlowTheme.of(context).labelMedium.override(
+                                  fontFamily: 'Outfit',
+                                  color: Color(0xFF606A85),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                       ),
                     ),
                   ),
@@ -559,8 +502,7 @@ class NewListingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(
-          0, 12, 0, 12),
+      padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
       child: Container(
         width: 220,
         height: 100,
@@ -576,15 +518,13 @@ class NewListingCard extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Stack(
                   children: [
                     ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.network(
                         'https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YmVhY2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
                         width: double.infinity,
@@ -593,62 +533,39 @@ class NewListingCard extends StatelessWidget {
                       ),
                     ),
                     Align(
-                      alignment:
-                          AlignmentDirectional(1, -1),
+                      alignment: AlignmentDirectional(1, -1),
                       child: Padding(
-                        padding: EdgeInsetsDirectional
-                            .fromSTEB(0, 8, 8, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
                         child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(
-                                  12),
+                          borderRadius: BorderRadius.circular(12),
                           child: BackdropFilter(
                             filter: ImageFilter.blur(
                               sigmaX: 5,
                               sigmaY: 2,
                             ),
                             child: Row(
-                              mainAxisSize:
-                                  MainAxisSize.min,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Padding(
-                                  padding:
-                                      EdgeInsetsDirectional
-                                          .fromSTEB(
-                                              16,
-                                              0,
-                                              0,
-                                              0),
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      16, 0, 0, 0),
                                   child: Container(
                                     width: 36,
                                     height: 36,
-                                    decoration:
-                                        BoxDecoration(
-                                      color: Color(
-                                          0x9AFFFFFF),
-                                      borderRadius:
-                                          BorderRadius
-                                              .circular(
-                                                  12),
-                                      border:
-                                          Border.all(
-                                        color: Color(
-                                            0xFFE5E7EB),
+                                    decoration: BoxDecoration(
+                                      color: Color(0x9AFFFFFF),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Color(0xFFE5E7EB),
                                         width: 2,
                                       ),
                                     ),
-                                    alignment:
-                                        AlignmentDirectional(
-                                            0, 0),
+                                    alignment: AlignmentDirectional(0, 0),
                                     child: Padding(
-                                      padding:
-                                          EdgeInsets
-                                              .all(2),
+                                      padding: EdgeInsets.all(2),
                                       child: Icon(
-                                        Icons
-                                            .favorite_border,
-                                        color: Color(
-                                            0xFF15161E),
+                                        Icons.favorite_border,
+                                        color: Color(0xFF15161E),
                                         size: 20,
                                       ),
                                     ),
@@ -664,14 +581,10 @@ class NewListingCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    EdgeInsetsDirectional.fromSTEB(
-                        0, 8, 0, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                 child: Text(
                   'Card Name',
-                  style: FlutterFlowTheme.of(context)
-                      .titleLarge
-                      .override(
+                  style: FlutterFlowTheme.of(context).titleLarge.override(
                         fontFamily: 'Outfit',
                         color: Color(0xFF15161E),
                         fontSize: 22,
@@ -680,13 +593,9 @@ class NewListingCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    EdgeInsetsDirectional.fromSTEB(
-                        0, 4, 0, 8),
+                padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
                 child: RichText(
-                  textScaleFactor:
-                      MediaQuery.of(context)
-                          .textScaleFactor,
+                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
                   text: TextSpan(
                     children: [
                       TextSpan(
@@ -697,23 +606,15 @@ class NewListingCard extends StatelessWidget {
                       ),
                       TextSpan(
                         text: ' ',
-                        style: FlutterFlowTheme.of(
-                                context)
-                            .labelSmall
-                            .override(
+                        style: FlutterFlowTheme.of(context).labelSmall.override(
                               fontFamily: 'Outfit',
-                              color:
-                                  Color(0xFF606A85),
+                              color: Color(0xFF606A85),
                               fontSize: 12,
-                              fontWeight:
-                                  FontWeight.w500,
+                              fontWeight: FontWeight.w500,
                             ),
                       )
                     ],
-                    style: FlutterFlowTheme.of(
-                            context)
-                        .labelMedium
-                        .override(
+                    style: FlutterFlowTheme.of(context).labelMedium.override(
                           fontFamily: 'Outfit',
                           color: Color(0xFF606A85),
                           fontSize: 14,

@@ -12,22 +12,58 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:crypto/crypto.dart';
+import 'package:http/http.dart' as http;
 
-
-class Auth2LoginWidget extends StatefulWidget {
-  const Auth2LoginWidget({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  _Auth2LoginWidgetState createState() => _Auth2LoginWidgetState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _Auth2LoginWidgetState extends State<Auth2LoginWidget>
+class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   static String id = 'login_screen';
 
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  String emailValue = "";
+  String passwordValue = "";
+  String hashPassword = "";
+
+  // Define the signIn function
+  Future<void> signIn() async {
+    try {
+      String apiUrl =
+          'https://nliqxp1fz0.execute-api.us-east-1.amazonaws.com/loginstage/login';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'email': emailValue,
+          'password': passwordValue,
+        },
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        // Request successful, you can handle the response data here
+        print('Response data: ${response.body}');
+
+        ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ///  !!!!!!!!!!!!! BURDA HOME PAGE YONLENDIR !!!!!!!!!!!!!
+        ///  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Navigator.pushReplacementNamed(context, '/');
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle sign-in errors, such as invalid credentials
+      print('Error signing in: $e');
+    }
+  }
 
   final animationsMap = {
     'containerOnPageLoadAnimation': AnimationInfo(
@@ -105,7 +141,7 @@ class _Auth2LoginWidgetState extends State<Auth2LoginWidget>
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 70, 0, 32),
                   child: Container(
-                    width: 200,
+                    width: 220,
                     height: 70,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
@@ -124,7 +160,7 @@ class _Auth2LoginWidgetState extends State<Auth2LoginWidget>
                           ),
                         ),
                         Text(
-                          'flow.io',
+                          'Collectify',
                           style: FlutterFlowTheme.of(context)
                               .displaySmall
                               .override(
@@ -182,56 +218,65 @@ class _Auth2LoginWidgetState extends State<Auth2LoginWidget>
                               child: Container(
                                 width: double.infinity,
                                 child: TextFormField(
-                                  controller: TextEditingController(),
-                                  focusNode: FocusNode(),
-                                  autofocus: true,
-                                  autofillHints: [AutofillHints.email],
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'Email',
-                                    labelStyle:
-                                        FlutterFlowTheme.of(context).labelLarge,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
-                                        width: 2,
+                                    controller: emailController,
+                                    focusNode: FocusNode(),
+                                    autofocus: true,
+                                    autofillHints: [AutofillHints.email],
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelText: 'Email',
+                                      labelStyle: FlutterFlowTheme.of(context)
+                                          .labelLarge,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .alternate,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primary,
-                                        width: 2,
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 2,
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .error,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 2,
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .error,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context)
+                                          .primaryBackground,
                                     ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                  ),
-                                  style: FlutterFlowTheme.of(context).bodyLarge,
-                                  keyboardType: TextInputType.emailAddress,
-                                  cursorColor:
-                                      FlutterFlowTheme.of(context).primary,
-                                ),
+                                    style:
+                                        FlutterFlowTheme.of(context).bodyLarge,
+                                    keyboardType: TextInputType.emailAddress,
+                                    cursorColor:
+                                        FlutterFlowTheme.of(context).primary,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value'; // Return an error message if the value is empty
+                                      }
+                                    },
+                                    onSaved: (newValue) {},
+                                    onChanged: (value) {
+                                      emailValue = emailController.text;
+                                    }),
                               ),
                             ),
                             Padding(
@@ -240,83 +285,90 @@ class _Auth2LoginWidgetState extends State<Auth2LoginWidget>
                               child: Container(
                                 width: double.infinity,
                                 child: TextFormField(
-                                  controller: TextEditingController(),
-                                  focusNode: FocusNode(),
-                                  autofocus: true,
-                                  autofillHints: [AutofillHints.password],
-                                  obscureText: !passwordVisibility,
-                                  decoration: InputDecoration(
-                                    labelText: 'Password',
-                                    labelStyle:
-                                        FlutterFlowTheme.of(context).labelLarge,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
-                                        width: 2,
+                                    controller: passwordController,
+                                    focusNode: FocusNode(),
+                                    autofocus: true,
+                                    autofillHints: [AutofillHints.password],
+                                    obscureText: !passwordVisibility,
+                                    decoration: InputDecoration(
+                                      labelText: 'Password',
+                                      labelStyle: FlutterFlowTheme.of(context)
+                                          .labelLarge,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .alternate,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .error,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context)
+                                              .error,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context)
+                                          .primaryBackground,
+                                      suffixIcon: InkWell(
+                                        onTap: () => setState(
+                                          () => passwordVisibility =
+                                              !passwordVisibility,
+                                        ),
+                                        focusNode:
+                                            FocusNode(skipTraversal: true),
+                                        child: Icon(
+                                          passwordVisibility
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined,
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                          size: 24,
+                                        ),
+                                      ),
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primary,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                            FlutterFlowTheme.of(context).error,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    filled: true,
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                    suffixIcon: InkWell(
-                                      onTap: () => setState(
-                                        () => passwordVisibility =
-                                            !passwordVisibility,
-                                      ),
-                                      focusNode: FocusNode(skipTraversal: true),
-                                      child: Icon(
-                                        passwordVisibility
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryText,
-                                        size: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.of(context).bodyLarge,
-                                  cursorColor:
-                                      FlutterFlowTheme.of(context).primary,
-                                  validator:(value) {
-                                    
-                                  },
-                                  onSaved: (newValue) {
-                                    
-                                  },    
-                                ),
+                                    style:
+                                        FlutterFlowTheme.of(context).bodyLarge,
+                                    cursorColor:
+                                        FlutterFlowTheme.of(context).primary,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value'; // Return an error message if the value is empty
+                                      }
+                                    },
+                                    onSaved: (newValue) {},
+                                    onChanged: (value) {
+                                      passwordValue = passwordController.text;
+                                    }),
                               ),
                             ),
                             Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                               child: FFButtonWidget(
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  // Call the signIn function
+                                  await signIn();
+                                },
                                 text: 'Sign In',
                                 options: FFButtonOptions(
                                   width: double.infinity,
@@ -367,17 +419,7 @@ class _Auth2LoginWidgetState extends State<Auth2LoginWidget>
                                   hoverColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
-                                    // context.pushNamed(
-                                    //   'auth_2_Create',
-                                    //   extra: <String, dynamic>{
-                                    //     kTransitionInfoKey: TransitionInfo(
-                                    //       hasTransition: true,
-                                    //       transitionType:
-                                    //           PageTransitionType.fade,
-                                    //       duration: Duration(milliseconds: 200),
-                                    //     ),
-                                    //   },
-                                    // );
+                                    Navigator.pushReplacementNamed(context, '/Signup');
                                   },
                                   child: RichText(
                                     textScaleFactor:
