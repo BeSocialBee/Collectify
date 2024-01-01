@@ -69,7 +69,7 @@ class _CardDetailsState extends State<CardDetails> {
           backgroundColor: Color(0xFF61ADFE),
           automaticallyImplyLeading: false,
           title: Text(
-            'Make A Bid',
+            'Card Details',
             textAlign: TextAlign.center,
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
@@ -662,7 +662,7 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
   double sliderValue = 0;
   late Future<Map<String, dynamic>> cardData;
   late Future<Map<String, dynamic>> userData;
-    late Future<Map<String, dynamic>> quickSellData;
+  late Future<Map<String, dynamic>> quickSellData;
 
 
   @override
@@ -762,15 +762,14 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
   }
 }
 
-Future<Map<String, dynamic>> getCardbyID(cardId) async {
+Future<Map<String, dynamic>> getCardbyID(uniquecardId) async {
   try {
-
     String apiUrl =
         'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getCardByIdMyCollection';
     var response = await http.post(
       Uri.parse(apiUrl),
       body: {
-        'uniquecardId': cardId,
+        'uniquecardId': uniquecardId,
       },
     );
 
@@ -780,8 +779,8 @@ Future<Map<String, dynamic>> getCardbyID(cardId) async {
       // Request successful, you can handle the response data here
       final Map<String, dynamic> jsonResponse =
           jsonDecode(response.body); // Decode the response body as a Map
-      final Map<String, dynamic> jsonArray = jsonResponse['cardData'] ?? []; // Access the "cardsData" key to get the array of cards
-      //print(jsonArray);
+      final Map<String, dynamic> jsonArray = jsonResponse['cardData'] ??
+          []; // Access the "cardsData" key to get the array of cards
       return jsonArray;
     } else {
       // Request failed, handle the error
@@ -798,41 +797,40 @@ Future<Map<String, dynamic>> getCardbyID(cardId) async {
 Future<Map<String, dynamic>> MakeAuction(
     cardId, hour, minute, bidAmount) async {
   try {
-    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
-    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+      var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+      
+      print(userID);
+      print(cardId);
+      print(hour);
+      print(minute);
+      print(bidAmount);
 
-    print("auctiooooooonnnnn");
-
-    String apiUrl =
-        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userProfileInfo';
-    var response = await http.post(
-      Uri.parse(apiUrl),
-      body: {
-        'userID': userID,
-        'cardId': cardId,
-      },
-    );
-
-    // Check the response status
-    if (response.statusCode == 200) {
-      //print(response.body);
-      // Request successful, you can handle the response data here
-      final Map<String, dynamic> jsonResponse =
-          jsonDecode(response.body); // Decode the response body as a Map
-      final Map<String, dynamic> jsonArray = jsonResponse['usersData'] ??
-          []; // Access the "cardsData" key to get the array of cards
-      print(jsonArray);
-      return jsonArray;
-    } else {
-      // Request failed, handle the error
-      print('Error response: ${response.statusCode}');
+      String apiUrl = 'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/AddNewAuction';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'userID': userID,
+          'cardId': cardId,
+          'hour' : hour.toString(),
+          'minute' : minute.toString(),
+          'bidAmount' : bidAmount.toString(),
+        },
+      );
+      // Check the response status
+      if (response.statusCode == 200) {
+        print(response.body);
+        return {'success': true}; // Modify this based on your actual response 
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+        throw Exception('Failed to get card data');
+      }
+    } catch (e) {
+      // Handle errors, such as invalid credentials
+      print('Error making auction : $e');
       throw Exception('Failed to get card data');
     }
-  } catch (e) {
-    // Handle errors, such as invalid credentials
-    print('Errorloading profile: $e');
-    throw Exception('Failed to get card data');
-  }
 }
 
 Future<Map<String, dynamic>> getUserInfo() async {
@@ -869,12 +867,14 @@ Future<Map<String, dynamic>> getUserInfo() async {
     throw Exception('Failed to get card data');
   }
 }
+
+
 Future<Map<String, dynamic>> QuickSell(
     cardId, newPrice) async {
   try {
       //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
       var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
-
+      
       print(userID);
       print(cardId);
       print(newPrice);

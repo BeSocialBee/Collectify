@@ -15,54 +15,24 @@ import 'package:line_icons/line_icons.dart';
 
 //import 'package:collectify/sharedpref_util.dart';
 
-class Market extends StatefulWidget {
-  const Market({Key? key}) : super(key: key);
+class CollectionScreen extends StatefulWidget {
+  //String collectionName;
+
+  CollectionScreen({
+    Key? key,
+    //required this.collectionName
+  }) : super(key: key);
 
   @override
-  _ListProductsWidgetState createState() => _ListProductsWidgetState();
+  _CollectionScreenState createState() => _CollectionScreenState();
 }
 
-class _ListProductsWidgetState extends State<Market>
+class _CollectionScreenState extends State<CollectionScreen>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  static String id = 'market_screen';
 
   late Future<List<dynamic>> auctionCards;
   late Future<List<dynamic>> fixedPriceCards;
-
-
-
-  // When card is viewed by user, this card view will increase to use in home page
-  Future<void> updateViewCard(cardId) async {
-    try {
-      String apiUrl =
-          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/cardViewed';
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        body: {
-          'cardId': cardId,
-        },
-      );
-
-      if (response.statusCode == 200) {
-           print('Succesfully viewed');
-      } else {
-        // Request failed, handle the error
-        throw Exception('Failed to fetch cards.');
-      }
-    } catch (e, stackTrace) {
-      print('Failed to fetch cards fixedd. Error: $e');
-      print('Stack trace: $stackTrace');
-      throw Exception('Failed to fetch cards fixedd. Error: $e');
-    }
-  }
-
-
-
-
-
-  // Define the signIn function
-  
 
   @override
   void initState() {
@@ -113,7 +83,7 @@ class _ListProductsWidgetState extends State<Market>
       );
 
       if (response.statusCode == 200) {
-       // Decode the response body as a Map
+        // Decode the response body as a Map
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
         // Access the "cardsData" key to get the array of cards
@@ -161,12 +131,26 @@ class _ListProductsWidgetState extends State<Market>
         key: scaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 60,
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xFF14181B),
+              size: 30,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+          ),
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              'Market',
+              'Collection name',
               style: FlutterFlowTheme.of(context).titleLarge.override(
                     fontFamily: 'Outfit',
                     color: Color(0xFF14181B),
@@ -175,48 +159,6 @@ class _ListProductsWidgetState extends State<Market>
                   ),
             ),
           ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 4),
-              child: Row(
-                children: [
-                  Card(
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 22, right: 12),
-                      child: Container(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            Text(
-                              '123',
-                              style: FlutterFlowTheme.of(context)
-                                  .titleLarge
-                                  .override(
-                                    fontFamily: 'Outfit',
-                                    color: Color(0xFF14181B),
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            LineIcon.coins(
-                              color: Colors.yellow,
-                              size: 30,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30))),
-                  )
-                ],
-              ),
-            ),
-          ],
           centerTitle: true,
           elevation: 2,
         ),
@@ -228,128 +170,48 @@ class _ListProductsWidgetState extends State<Market>
                 children: [
                   Align(
                     alignment: Alignment(0, 0),
-                    child: FlutterFlowButtonTabBar(
-                      useToggleButtonStyle: false,
-                      isScrollable: true,
-                      labelStyle:
-                          FlutterFlowTheme.of(context).titleMedium.override(
-                                fontFamily: 'Plus Jakarta Sans',
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                              ),
-                      unselectedLabelStyle: TextStyle(),
-                      labelColor: Color(0xFF4B39EF),
-                      unselectedLabelColor: Color(0xFF57636C),
-                      backgroundColor: Color(0x4C4B39EF),
-                      borderColor: Color(0xFF4B39EF),
-                      borderWidth: 2,
-                      borderRadius: 12,
-                      elevation: 0,
-                      labelPadding:
-                          EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                      buttonMargin:
-                          EdgeInsetsDirectional.fromSTEB(0, 12, 16, 0),
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                      tabs: [
-                        Tab(
-                          text: 'Auction',
-                        ),
-                        Tab(
-                          text: 'Quick Buy',
-                        ),
-                      ],
-                      controller: tabController,
-                    ),
                   ),
                   Expanded(
-                    child: TabBarView(
-                      controller: tabController,
-                      children: [
-                        FutureBuilder<List<dynamic>>(
-                          future: auctionCards,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else if (snapshot.hasError) {
-                              return Center(
-                                child: Text('Error: ${snapshot.error}'),
-                              );
-                            } else if (!snapshot.hasData ||
-                                snapshot.data!.isEmpty) {
-                              return Center(
-                                child: Text('No data available.'),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          mainAxisSpacing: 4,
-                                          crossAxisSpacing: 4,
-                                          childAspectRatio: 0.8),
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    var card = snapshot.data![index];
-                                    return Widget1(
-                                      cardPrice: card['cardPrice'],
-                                      cardUrl: card['cardURL'],
-                                      cardId: card['cardID'],
-                                    );
-                                  },
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        FutureBuilder<List<dynamic>>(
-                            future: fixedPriceCards,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
+                    child: FutureBuilder<List<dynamic>>(
+                      future: fixedPriceCards,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error: ${snapshot.error}'),
+                          );
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Center(
+                            child: Text('No data available.'),
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 4,
+                                      crossAxisSpacing: 4,
+                                      childAspectRatio: 0.8),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                var card = snapshot.data![index];
+                                return CollectionScreenCardWidget(
+                                  cardPrice: card['cardPrice'],
+                                  cardUrl: card['cardURL'],
+                                  cardId: card['cardID'],
                                 );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('Error: ${snapshot.error}'),
-                                );
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Center(
-                                  child: Text('No data available.'),
-                                );
-                              } else {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: GridView.builder(
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            mainAxisSpacing: 4,
-                                            crossAxisSpacing: 4,
-                                            childAspectRatio: 0.8),
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      var card = snapshot.data![index];
-                                      return Widget1(
-                                        cardPrice: card['cardPrice'],
-                                        cardUrl: card['cardURL'],
-                                        cardId: card['cardID'],
-                                      );
-                                    },
-                                  ),
-                                );
-                              }
-                            })
-                      ],
+                              },
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -362,137 +224,12 @@ class _ListProductsWidgetState extends State<Market>
   }
 }
 
-class AuctionMarketCardDetails extends StatelessWidget {
-  const AuctionMarketCardDetails({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-      child: InkWell(
-        splashColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: () async {
-          //context.pushNamed('null');
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Color(0xFFF1F4F8),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(8, 8, 12, 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/7c5678f4-c28d-4862-a8d9-56750f839f12/zion-1-basketball-shoes-bJ0hLJ.png',
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                  child: Text(
-                    'burasii mii',
-                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Plus Jakarta Sans',
-                          color: Color(0xFF14181B),
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class QuickBuyMarketCardDetails extends StatelessWidget {
-  final Map<String, dynamic> cardData;
-
-  const QuickBuyMarketCardDetails({
-    required this.cardData,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    String cardTitle = cardData['cardTitle'] ?? '';
-    String cardDescription = cardData['cardDescription'] ?? '';
-    String cardURL = cardData['cardURL'] ?? '';
-
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-      child: InkWell(
-        splashColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: () async {
-          //context.pushNamed('null');
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Color(0xFFF1F4F8),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(8, 8, 12, 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    '$cardURL',
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                  child: Text(
-                    cardTitle,
-                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Plus Jakarta Sans',
-                          color: Color(0xFF14181B),
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class Widget1 extends StatelessWidget {
+class CollectionScreenCardWidget extends StatelessWidget {
   final String? cardUrl;
   int cardPrice = 0;
   final String? cardId;
 
-  Widget1({
+  CollectionScreenCardWidget({
     required this.cardPrice,
     required this.cardUrl,
     required this.cardId, // Pass cardId in the constructor
@@ -501,15 +238,8 @@ class Widget1 extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) =>
-        //             ProductDetailsWidget())); // Constructer içine gerekli inputları yaz
-      },
       child: Container(
-        height: 800,
+        height: 600,
         child: Card(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -536,67 +266,6 @@ class Widget1 extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 6, 0, 4),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              '\$ $cardPrice',
-                              style: FlutterFlowTheme.of(context)
-                                  .headlineSmall
-                                  .override(
-                                    fontFamily: 'Outfit',
-                                    color: Color(0xFF14181B),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        FFButtonWidget(
-                          onPressed: () {
-                            //buyCard(cardId);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CardDetails(cardId: cardId!,)));
-                          },
-                          text: 'Buy',
-                          options: FFButtonOptions(
-                            width: 70,
-                            height: 30,
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                            iconPadding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                            color: FlutterFlowTheme.of(context).tertiary,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Outfit',
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                ),
-                            elevation: 3,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -605,4 +274,3 @@ class Widget1 extends StatelessWidget {
     );
   }
 }
-

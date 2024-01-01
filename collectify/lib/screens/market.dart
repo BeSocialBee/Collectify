@@ -1,4 +1,6 @@
 import 'package:collectify/screens/card_details.dart';
+import 'package:collectify/screens/card_in_auction.dart';
+import 'package:collectify/screens/card_in_quickBuy.dart';
 import 'package:line_icons/line_icon.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -30,8 +32,6 @@ class _ListProductsWidgetState extends State<Market>
   late Future<List<dynamic>> auctionCards;
   late Future<List<dynamic>> fixedPriceCards;
 
-
-
   // When card is viewed by user, this card view will increase to use in home page
   Future<void> updateViewCard(cardId) async {
     try {
@@ -45,7 +45,7 @@ class _ListProductsWidgetState extends State<Market>
       );
 
       if (response.statusCode == 200) {
-           print('Succesfully viewed');
+        print('Succesfully viewed');
       } else {
         // Request failed, handle the error
         throw Exception('Failed to fetch cards.');
@@ -56,13 +56,7 @@ class _ListProductsWidgetState extends State<Market>
       throw Exception('Failed to fetch cards fixedd. Error: $e');
     }
   }
-
-
-
-
-
   // Define the signIn function
-  
 
   @override
   void initState() {
@@ -113,7 +107,7 @@ class _ListProductsWidgetState extends State<Market>
       );
 
       if (response.statusCode == 200) {
-       // Decode the response body as a Map
+        // Decode the response body as a Map
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
         // Access the "cardsData" key to get the array of cards
@@ -297,10 +291,11 @@ class _ListProductsWidgetState extends State<Market>
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     var card = snapshot.data![index];
-                                    return Widget1(
+                                    return AuctionCardWidget(
                                       cardPrice: card['cardPrice'],
                                       cardUrl: card['cardURL'],
                                       cardId: card['cardID'],
+                                      documentID: card['documentID'],  
                                     );
                                   },
                                 ),
@@ -339,10 +334,11 @@ class _ListProductsWidgetState extends State<Market>
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       var card = snapshot.data![index];
-                                      return Widget1(
+                                      return QuickBuyCardWidget(
                                         cardPrice: card['cardPrice'],
                                         cardUrl: card['cardURL'],
                                         cardId: card['cardID'],
+                                        documentID: card['documentID'],  
                                       );
                                     },
                                   ),
@@ -362,140 +358,17 @@ class _ListProductsWidgetState extends State<Market>
   }
 }
 
-class AuctionMarketCardDetails extends StatelessWidget {
-  const AuctionMarketCardDetails({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-      child: InkWell(
-        splashColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: () async {
-          //context.pushNamed('null');
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Color(0xFFF1F4F8),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(8, 8, 12, 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/7c5678f4-c28d-4862-a8d9-56750f839f12/zion-1-basketball-shoes-bJ0hLJ.png',
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                  child: Text(
-                    'burasii mii',
-                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Plus Jakarta Sans',
-                          color: Color(0xFF14181B),
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class QuickBuyMarketCardDetails extends StatelessWidget {
-  final Map<String, dynamic> cardData;
-
-  const QuickBuyMarketCardDetails({
-    required this.cardData,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    String cardTitle = cardData['cardTitle'] ?? '';
-    String cardDescription = cardData['cardDescription'] ?? '';
-    String cardURL = cardData['cardURL'] ?? '';
-
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-      child: InkWell(
-        splashColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: () async {
-          //context.pushNamed('null');
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Color(0xFFF1F4F8),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(8, 8, 12, 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    '$cardURL',
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                  child: Text(
-                    cardTitle,
-                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          fontFamily: 'Plus Jakarta Sans',
-                          color: Color(0xFF14181B),
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class Widget1 extends StatelessWidget {
   final String? cardUrl;
   int cardPrice = 0;
   final String? cardId;
+  final String? documentID;
 
   Widget1({
     required this.cardPrice,
     required this.cardUrl,
     required this.cardId, // Pass cardId in the constructor
+    required this.documentID,
     super.key,
   });
 
@@ -566,10 +439,250 @@ class Widget1 extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        CardDetails(cardId: cardId!,)));
+                                    builder: (context) => CardDetails(
+                                          cardId: cardId!,
+                                        )));
                           },
-                          text: 'Buy',
+                          text: 'Bid',
+                          options: FFButtonOptions(
+                            width: 70,
+                            height: 30,
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                            iconPadding:
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                            color: FlutterFlowTheme.of(context).tertiary,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  fontFamily: 'Outfit',
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                ),
+                            elevation: 3,
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class QuickBuyCardWidget extends StatelessWidget {
+  final String? cardUrl;
+  int cardPrice = 0;
+  final String? cardId; 
+  final String? documentID;
+
+  QuickBuyCardWidget({
+    required this.cardPrice,
+    required this.cardUrl,
+    required this.cardId, // Pass cardId in the constructor
+    required this.documentID,
+    super.key,
+  });
+
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    QuickBuyScreenWidget())); // Constructer içine gerekli inputları yaz
+      },
+      child: Container(
+        height: 800,
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(3),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 9,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.network(
+                      '${cardUrl}',
+                      width: double.infinity,
+                      height: 190,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 6, 0, 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              '\$ $cardPrice',
+                              style: FlutterFlowTheme.of(context)
+                                  .headlineSmall
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF14181B),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        FFButtonWidget(
+                          onPressed: () {
+                            buyCard(cardId);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        QuickBuyScreenWidget()));
+                          },
+                          text: 'Bid',
+                          options: FFButtonOptions(
+                            width: 70,
+                            height: 30,
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                            iconPadding:
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                            color: FlutterFlowTheme.of(context).tertiary,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  fontFamily: 'Outfit',
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                ),
+                            elevation: 3,
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AuctionCardWidget extends StatelessWidget {
+  final String? cardUrl;
+  int cardPrice = 0;
+  final String? cardId;
+  final String? documentID;
+
+  AuctionCardWidget({
+    required this.cardPrice,
+    required this.cardUrl,
+    required this.cardId, // Pass cardId in the constructor
+    required this.documentID,
+    super.key,
+  });
+
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => AuctionScreenWidget(documentID:documentID!)));
+      },
+      child: Container(
+        height: 800,
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(3),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 9,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.network(
+                      '${cardUrl}',
+                      width: double.infinity,
+                      height: 190,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 6, 0, 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              '\$ $cardPrice',
+                              style: FlutterFlowTheme.of(context)
+                                  .headlineSmall
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF14181B),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        FFButtonWidget(
+                          onPressed: () {
+                            buyCard(cardId);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AuctionScreenWidget(documentID:documentID!)));
+                          },
+                          text: 'Bid',
                           options: FFButtonOptions(
                             width: 70,
                             height: 30,
@@ -607,29 +720,29 @@ class Widget1 extends StatelessWidget {
 }
 
 Future<void> buyCard(cardId) async {
-    try {
-      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
-      //print(userID);
+  try {
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    //print(userID);
 
-      String apiUrl =
-          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userHandleBuy';
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        body: {
-          'cardId': cardId,
-          //'userID': userID,
-        },
-      );
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userHandleBuy';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'cardId': cardId,
+        //'userID': userID,
+      },
+    );
 
-      // Check th*e response status
-      if (response.statusCode == 200) {
-        print('Success response: ${response.statusCode}');
-      } else {
-        // Request failed, handle the error
-        print('Error response: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Handle sign-in errors, such as invalid credentials
-      print('Error signing in: $e');
+    // Check th*e response status
+    if (response.statusCode == 200) {
+      print('Success response: ${response.statusCode}');
+    } else {
+      // Request failed, handle the error
+      print('Error response: ${response.statusCode}');
     }
+  } catch (e) {
+    // Handle sign-in errors, such as invalid credentials
+    print('Error signing in: $e');
   }
+}

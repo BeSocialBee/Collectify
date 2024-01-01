@@ -3,6 +3,7 @@ import 'package:collectify/screens/achievements..dart';
 import 'package:collectify/screens/card_details.dart';
 import 'package:collectify/screens/card_in_auction.dart';
 import 'package:collectify/screens/card_in_quickBuy.dart';
+import 'package:collectify/screens/collection_screen.dart';
 import 'package:collectify/screens/create_profile.dart';
 import 'package:collectify/screens/lb.dart';
 import 'package:collectify/screens/leaderboard.dart';

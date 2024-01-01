@@ -25,7 +25,7 @@ dependencies:
   luckywheel: ^1.0.0
   flutter_fortune_wheel: ^1.3.0
   flip_card: ^0.7.0
-  google_fonts: ^6.1.0
+  google_fonts: ^4.0.5
   timer_count_down: ^2.2.0
   navbar_router: ^0.7.2
   cached_network_image: ^3.3.0
@@ -46,7 +46,7 @@ dependencies:
   xml: ^6.5.0
   petitparser: ^6.0.2
   random_avatar: ^0.0.8
-
+  atomsbox: ^0.4.0
 
 
 

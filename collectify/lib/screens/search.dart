@@ -216,7 +216,7 @@ class Widget2 extends StatelessWidget {
                       ),
                       FFButtonWidget(
                         onPressed: () {
-                          return ProductDetailsWidget();
+                          //return ProductDetailsWidget();
                         },
                         text: 'Buy',
                         options: FFButtonOptions(
