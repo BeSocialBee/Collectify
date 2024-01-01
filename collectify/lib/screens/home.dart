@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttermoji/fluttermoji.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -135,29 +136,9 @@ class _HomeState extends State<Home> {
                               onTap: () async {
                                 Navigator.pushNamed(context, '/MyAccount');
                               },
-                              child: Container(
-                                width: 53,
-                                height: 53,
-                                decoration: BoxDecoration(
-                                  color: Color(0x4D9489F5),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Color(0xFF6F61EF),
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(2),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.network(
-                                      'https://picsum.photos/seed/626/600',
-                                      width: 300,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
+                              child: FluttermojiCircleAvatar(
+                                backgroundColor: Colors.grey[200],
+                                radius: 50,
                               ),
                             ),
                           ),

@@ -4,6 +4,7 @@ import 'package:collectify/screens/card_details.dart';
 import 'package:collectify/screens/card_in_auction.dart';
 import 'package:collectify/screens/card_info_screen.dart';
 import 'package:collectify/screens/card_sell_screen.dart';
+import 'package:collectify/screens/create_profile.dart';
 import 'package:collectify/screens/lb.dart';
 import 'package:collectify/screens/leaderboard.dart';
 import 'package:collectify/screens/login.dart';
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   Widget? _getpage(int _currentIndex) {
     switch (_currentIndex) {
       case 0:
-        return Home();
+        return LoginScreen();
       case 1:
         return Market();
       case 2:
