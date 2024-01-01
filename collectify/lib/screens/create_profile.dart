@@ -15,6 +15,9 @@ class CreateProfile extends StatefulWidget {
 }
 
 class _CreateProfileState extends State<CreateProfile> {
+
+  final TextEditingController usernameController = TextEditingController();
+  String userName = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +39,7 @@ class _CreateProfileState extends State<CreateProfile> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 70, 0, 32),
+                padding: EdgeInsetsDirectional.fromSTEB(0, 70, 0, 10),
                 child: Container(
                   width: 220,
                   height: 70,
@@ -68,77 +71,184 @@ class _CreateProfileState extends State<CreateProfile> {
                   ),
                 ),
               ),
-              Padding(padding: EdgeInsets.all(16),
-              child: Container(
-                width: double.infinity,
-                    constraints: BoxConstraints(
-                      maxWidth: 570,
-                    ),
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).secondaryBackground,
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 4,
-                          color: Color(0x33000000),
-                          offset: Offset(0, 2),
-                        )
-                      ],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-              child: Align(
-                child: Padding(padding: EdgeInsets.all(8),
-                child: Column(children: [SizedBox(
-                height: 25,
-              ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  "Create your avatar",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              FluttermojiCircleAvatar(
-                backgroundColor: Colors.grey[200],
-                radius: 100,
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Spacer(flex: 2),
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      height: 35,
-                      child: ElevatedButton.icon(
-                        icon: Icon(Icons.edit),
-                        label: Text("Customize"),
-                        onPressed: () => Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                                builder: (context) => NewPage())),
+                padding: EdgeInsets.all(16),
+                child: Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(
+                    maxWidth: 570,
+                  ),
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 4,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 2),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Align(
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 25,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              "Create your avatar",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 20),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          FluttermojiCircleAvatar(
+                            backgroundColor: Colors.grey[200],
+                            radius: 100,
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            children: [
+                              Spacer(flex: 2),
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  height: 35,
+                                  child: ElevatedButton.icon(
+                                    icon: Icon(Icons.edit),
+                                    label: Text("Customize"),
+                                    onPressed: () => Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (context) => NewPage())),
+                                  ),
+                                ),
+                              ),
+                              Spacer(flex: 2),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
+                              child: Container(
+                                width: double.infinity,
+                                child: TextFormField(
+                                  controller: usernameController,
+                                  focusNode: FocusNode(),
+                                  autofocus: true,
+                                  autofillHints: [AutofillHints.password],
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Username',
+                                    labelStyle:
+                                        FlutterFlowTheme.of(context).labelLarge,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primary,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color:
+                                            FlutterFlowTheme.of(context).error,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color:
+                                            FlutterFlowTheme.of(context).error,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    filled: true,
+                                    fillColor: FlutterFlowTheme.of(context)
+                                        .primaryBackground,
+                                    
+                                  ),
+                                  style: FlutterFlowTheme.of(context).bodyLarge,
+                                  cursorColor:
+                                      FlutterFlowTheme.of(context).primary,
+                                  validator:(value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a value'; // Return an error message if the value is empty
+                                    }
+                                  },
+                                  onSaved: (newValue) {
+
+                                  },  
+                                  onChanged: (value){
+                                    userName = usernameController.text;
+                                  } 
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
+                              child: FFButtonWidget(
+                                onPressed: () async {
+                                  Navigator.pushReplacementNamed(context, "/Home");
+                                  
+                                },
+                                text: 'Save Changes',
+                                options: FFButtonOptions(
+                                  width: double.infinity,
+                                  height: 44,
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 0, 0),
+                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 0, 0),
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .override(
+                                        fontFamily: 'Outfit',
+                                        color: Colors.white,
+                                      ),
+                                  elevation: 3,
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                  Spacer(flex: 2),
-                ],
+                ),
               ),
-              SizedBox(
-                height: 100,
-              ),],),),
-              ),),),
-
-
-
-              
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:collectify/screens/card_details.dart';
 import 'package:line_icons/line_icon.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -29,49 +30,50 @@ class _ListProductsWidgetState extends State<Market>
   late Future<List<dynamic>> auctionCards;
   late Future<List<dynamic>> fixedPriceCards;
 
-  // Define the signIn function
-  Future<void> buy(cardId) async {
-    try {
-      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
-      //print(userID);
 
+
+  // When card is viewed by user, this card view will increase to use in home page
+  Future<void> updateViewCard(cardId) async {
+    try {
       String apiUrl =
-          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userHandleBuy';
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/cardViewed';
       var response = await http.post(
         Uri.parse(apiUrl),
         body: {
           'cardId': cardId,
-          //'userID': userID,
         },
       );
 
-      // Check th*e response status
       if (response.statusCode == 200) {
-        print('Success response: ${response.statusCode}');
+           print('Succesfully viewed');
       } else {
         // Request failed, handle the error
-        print('Error response: ${response.statusCode}');
+        throw Exception('Failed to fetch cards.');
       }
-    } catch (e) {
-      // Handle sign-in errors, such as invalid credentials
-      print('Error signing in: $e');
+    } catch (e, stackTrace) {
+      print('Failed to fetch cards fixedd. Error: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to fetch cards fixedd. Error: $e');
     }
   }
+
+
+
+
+
+  // Define the signIn function
+  
 
   @override
   void initState() {
     super.initState();
     fixedPriceCards = getFixedMarket();
     auctionCards = getAuctionMarket();
-    print(fixedPriceCards);
-
-    //auctionCards = getAuctionMarket();
   }
 
   // Define the getUserInfo function
   Future<List<dynamic>> getFixedMarket() async {
     try {
-      print("burdaa");
       String apiUrl =
           'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userFixedMarketCards';
       var response = await http.get(
@@ -87,7 +89,7 @@ class _ListProductsWidgetState extends State<Market>
 
         // Optional: You might want to convert each item in the list to a strongly typed object
         //final List<Map<String, dynamic>> cardList = jsonArray.map((item) => item as Map<String, dynamic>).toList();
-
+        //print(jsonArray);
         return jsonArray;
       } else {
         // Request failed, handle the error
@@ -111,11 +113,16 @@ class _ListProductsWidgetState extends State<Market>
       );
 
       if (response.statusCode == 200) {
-        // Request successful, you can handle the response data here
-        List<dynamic> responseData = json.decode(response.body);
+       // Decode the response body as a Map
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-        print(response.statusCode);
-        return responseData;
+        // Access the "cardsData" key to get the array of cards
+        final List<dynamic> jsonArray = jsonResponse['cardsData'] ?? [];
+
+        // Optional: You might want to convert each item in the list to a strongly typed object
+        //final List<Map<String, dynamic>> cardList = jsonArray.map((item) => item as Map<String, dynamic>).toList();
+        print(jsonArray);
+        return jsonArray;
       } else {
         // Request failed, handle the error
 
@@ -293,6 +300,7 @@ class _ListProductsWidgetState extends State<Market>
                                     return Widget1(
                                       cardPrice: card['cardPrice'],
                                       cardUrl: card['cardURL'],
+                                      cardId: card['cardID'],
                                     );
                                   },
                                 ),
@@ -334,6 +342,7 @@ class _ListProductsWidgetState extends State<Market>
                                       return Widget1(
                                         cardPrice: card['cardPrice'],
                                         cardUrl: card['cardURL'],
+                                        cardId: card['cardID'],
                                       );
                                     },
                                   ),
@@ -481,12 +490,12 @@ class QuickBuyMarketCardDetails extends StatelessWidget {
 class Widget1 extends StatelessWidget {
   final String? cardUrl;
   int cardPrice = 0;
-  //final String? cardId;
+  final String? cardId;
 
   Widget1({
     required this.cardPrice,
     required this.cardUrl,
-    //required this.cardId, // Pass cardId in the constructor
+    required this.cardId, // Pass cardId in the constructor
     super.key,
   });
 
@@ -553,12 +562,12 @@ class Widget1 extends StatelessWidget {
                         ),
                         FFButtonWidget(
                           onPressed: () {
-                            // await buy(this.cardId);
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             ProductDetailsWidget()));
+                            buyCard(cardId);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CardDetails(cardId: cardId!,)));
                           },
                           text: 'Buy',
                           options: FFButtonOptions(
@@ -596,3 +605,31 @@ class Widget1 extends StatelessWidget {
     );
   }
 }
+
+Future<void> buyCard(cardId) async {
+    try {
+      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+      //print(userID);
+
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userHandleBuy';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'cardId': cardId,
+          //'userID': userID,
+        },
+      );
+
+      // Check th*e response status
+      if (response.statusCode == 200) {
+        print('Success response: ${response.statusCode}');
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle sign-in errors, such as invalid credentials
+      print('Error signing in: $e');
+    }
+  }

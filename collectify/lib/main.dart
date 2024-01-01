@@ -2,8 +2,7 @@ import 'package:collectify/features/card_gallery.dart';
 import 'package:collectify/screens/achievements..dart';
 import 'package:collectify/screens/card_details.dart';
 import 'package:collectify/screens/card_in_auction.dart';
-import 'package:collectify/screens/card_info_screen.dart';
-import 'package:collectify/screens/card_sell_screen.dart';
+import 'package:collectify/screens/card_in_quickBuy.dart';
 import 'package:collectify/screens/create_profile.dart';
 import 'package:collectify/screens/lb.dart';
 import 'package:collectify/screens/leaderboard.dart';
@@ -37,7 +36,7 @@ class _MyAppState extends State<MyApp> {
   Widget? _getpage(int _currentIndex) {
     switch (_currentIndex) {
       case 0:
-        return LoginScreen();
+        return QuickBuyScreen();
       case 1:
         return Market();
       case 2:
@@ -62,6 +61,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       initialRoute: '/',
       routes: {
+        "/Home":(context) => Home(),
         "/Login":(context) => LoginScreen(),
         "/Signup":(context) => SignUpScreen(),
         "/MyCollection":(context) => MyCollection(),

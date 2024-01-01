@@ -33,3 +33,6 @@ const kTextFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
 );
+
+
+const kElevationShadowColor = Color(0xffe4e4e4);

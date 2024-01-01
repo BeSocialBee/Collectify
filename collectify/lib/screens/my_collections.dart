@@ -1,4 +1,4 @@
-import 'package:collectify/screens/card_info_screen.dart';
+import 'package:collectify/screens/card_details.dart';
 import 'package:collectify/widgets/bottom_navigation_bar.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -14,7 +14,7 @@ import 'dart:convert';
 class MyCollection extends StatefulWidget {
   static String id = 'my_collection_screen';
   @override
-  State<MyCollection> createState() => _MyCollectionState();
+  State<MyCollection> createState() => _MyCollectionState(); 
 }
 
 class _MyCollectionState extends State<MyCollection> {
@@ -25,16 +25,14 @@ class _MyCollectionState extends State<MyCollection> {
   @override
   void initState() {
     super.initState();
-    getUserCards();
+    userCards = getUserCards();
   }
 
   // Define the getUserInfo function
-  Future<void> getUserCards() async {
+  Future<List<dynamic>> getUserCards() async {
     try {
       //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
       var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
-
-      print(userID);
       String apiUrl =
           'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userCollections';
       var response = await http.post(
@@ -47,16 +45,19 @@ class _MyCollectionState extends State<MyCollection> {
       // Check the response status
       if (response.statusCode == 200) {
         // Request successful, you can handle the response data here
-        Map<String, dynamic> responseData = json.decode(response.body);
-        print(responseData['cardData']);
-        userCards = responseData['cardData'];
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        final List<dynamic> jsonArray = jsonResponse['cardsData'] ?? [];
+        print(jsonArray);
+        return jsonArray;
       } else {
         // Request failed, handle the error
         print('Error response: ${response.statusCode}');
+        throw Exception('Failed to fetch cards fixedd.');
       }
     } catch (e) {
       // Handle errors, such as invalid credentials
-      print('Errorloading profile: $e');
+      print('Errorloading profile: $e');  
+      throw Exception('Failed to fetch cards fixedd. Error: $e');
     }
   }
 
@@ -155,6 +156,7 @@ class _MyCollectionState extends State<MyCollection> {
                     return Widget1(
                       cardPrice: card['cardPrice'],
                       cardUrl: card['cardURL'],
+                      cardId: card['uniquecardId'],
                     );
                   },
                 ),
@@ -169,24 +171,24 @@ class _MyCollectionState extends State<MyCollection> {
 
 class Widget1 extends StatelessWidget {
   final String? cardUrl;
-  final double? cardPrice;
-  //final String? cardId;
+  final int? cardPrice;
+  final String? cardId;
 
   Widget1({
     required this.cardPrice,
     required this.cardUrl,
-    //required this.cardId, // Pass cardId in the constructor
+    required this.cardId, // Pass cardId in the constructor
     super.key,
   });
 
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) =>
-        //             ProductDetailsWidget())); // Constructer içine gerekli inputları yaz
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    CardDetails(cardId: cardId!,))); // Constructer içine gerekli inputları yaz
       },
       child: Container(
         height: 800,
@@ -249,9 +251,9 @@ class Widget1 extends StatelessWidget {
                             //         builder: (context) =>
                             //             ProductDetailsWidget()));
                           },
-                          text: 'Buy',
+                          text: 'View',
                           options: FFButtonOptions(
-                            width: 70,
+                            width: 100,
                             height: 30,
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
