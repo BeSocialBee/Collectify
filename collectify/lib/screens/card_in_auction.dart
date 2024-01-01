@@ -1,3 +1,4 @@
+import 'package:collectify/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:collectify/screens/card_in_quickBuy.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -73,6 +74,20 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
         key: scaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 60,
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xFF14181B),
+              size: 30,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+          ),
           backgroundColor: Color(0xFF61ADFE),
           automaticallyImplyLeading: false,
           title: Text(

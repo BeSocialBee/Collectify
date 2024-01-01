@@ -52,6 +52,20 @@ class _CardDetailsState extends State<CardDetails> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
+          leading: FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 60,
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xFF14181B),
+              size: 30,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+          ),
           backgroundColor: Color(0xFF61ADFE),
           automaticallyImplyLeading: false,
           title: Text(
@@ -648,6 +662,8 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
   double sliderValue = 0;
   late Future<Map<String, dynamic>> cardData;
   late Future<Map<String, dynamic>> userData;
+    late Future<Map<String, dynamic>> quickSellData;
+
 
   @override
   Widget build(BuildContext context) {
@@ -718,6 +734,7 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
             child: FFButtonWidget(
               onPressed: () async {
+                quickSellData = QuickSell(_CardDetailsState.cardId, sliderValue);
                 Navigator.pop(context);
               },
               text: 'Button',
@@ -747,12 +764,13 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
 
 Future<Map<String, dynamic>> getCardbyID(cardId) async {
   try {
+
     String apiUrl =
-        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getCardbyId';
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getCardByIdMyCollection';
     var response = await http.post(
       Uri.parse(apiUrl),
       body: {
-        'cardId': cardId,
+        'uniquecardId': cardId,
       },
     );
 
@@ -762,8 +780,8 @@ Future<Map<String, dynamic>> getCardbyID(cardId) async {
       // Request successful, you can handle the response data here
       final Map<String, dynamic> jsonResponse =
           jsonDecode(response.body); // Decode the response body as a Map
-      final Map<String, dynamic> jsonArray = jsonResponse['cardData'] ??
-          []; // Access the "cardsData" key to get the array of cards
+      final Map<String, dynamic> jsonArray = jsonResponse['cardData'] ?? []; // Access the "cardsData" key to get the array of cards
+      //print(jsonArray);
       return jsonArray;
     } else {
       // Request failed, handle the error
@@ -850,4 +868,38 @@ Future<Map<String, dynamic>> getUserInfo() async {
     print('Errorloading profile: $e');
     throw Exception('Failed to get card data');
   }
+}
+Future<Map<String, dynamic>> QuickSell(
+    cardId, newPrice) async {
+  try {
+      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+      var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+      print(userID);
+      print(cardId);
+      print(newPrice);
+
+      String apiUrl = 'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userSellInPazar';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'userID': userID,
+          'cardId': cardId,
+          'newPrice': newPrice,
+        },
+      );
+      // Check the response status
+      if (response.statusCode == 200) {
+        print(response.body);
+        return {'success': true}; // Modify this based on your actual response 
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+        throw Exception('Failed to get card data');
+      }
+    } catch (e) {
+      // Handle errors, such as invalid credentials
+      print('Error making auction : $e');
+      throw Exception('Failed to get card data');
+    }
 }

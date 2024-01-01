@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
   Widget? _getpage(int _currentIndex) {
     switch (_currentIndex) {
       case 0:
-        return QuickBuyScreen();
+        return Home();
       case 1:
         return Market();
       case 2:

@@ -14,7 +14,7 @@ import 'dart:convert';
 class MyCollection extends StatefulWidget {
   static String id = 'my_collection_screen';
   @override
-  State<MyCollection> createState() => _MyCollectionState(); 
+  State<MyCollection> createState() => _MyCollectionState();
 }
 
 class _MyCollectionState extends State<MyCollection> {
@@ -47,7 +47,6 @@ class _MyCollectionState extends State<MyCollection> {
         // Request successful, you can handle the response data here
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         final List<dynamic> jsonArray = jsonResponse['cardsData'] ?? [];
-        print(jsonArray);
         return jsonArray;
       } else {
         // Request failed, handle the error
@@ -56,7 +55,7 @@ class _MyCollectionState extends State<MyCollection> {
       }
     } catch (e) {
       // Handle errors, such as invalid credentials
-      print('Errorloading profile: $e');  
+      print('Errorloading profile: $e');
       throw Exception('Failed to fetch cards fixedd. Error: $e');
     }
   }
@@ -187,8 +186,9 @@ class Widget1 extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    CardDetails(cardId: cardId!,))); // Constructer içine gerekli inputları yaz
+                builder: (context) => CardDetails(
+                      cardId: cardId!,
+                    ))); // Constructer içine gerekli inputları yaz
       },
       child: Container(
         height: 800,
@@ -244,12 +244,12 @@ class Widget1 extends StatelessWidget {
                         ),
                         FFButtonWidget(
                           onPressed: () {
-                            // await buy(this.cardId);
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             ProductDetailsWidget()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CardDetails(
+                                          cardId: cardId!,
+                                        )));
                           },
                           text: 'View',
                           options: FFButtonOptions(

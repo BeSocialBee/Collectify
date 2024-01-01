@@ -1,3 +1,5 @@
+import 'package:collectify/flutter_flow/flutter_flow_icon_button.dart';
+
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -91,9 +93,28 @@ class _MyAccountState extends State<MyAccount>
   Widget buildProfilePage() {
     return GestureDetector(
       child: Scaffold(
+        appBar: AppBar(
+          leading: FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 60,
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xFF14181B),
+              size: 30,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text("Account"),
+          elevation: 5,
+        ),
         key: scaffoldKey,
         backgroundColor: Color(0xFFF1F4F8),
         body: SingleChildScrollView(
+        
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
