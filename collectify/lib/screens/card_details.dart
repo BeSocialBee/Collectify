@@ -811,7 +811,7 @@ Future<Map<String, dynamic>> MakeAuction(
         Uri.parse(apiUrl),
         body: {
           'userID': userID,
-          'cardId': cardId,
+          'uniquecardId': cardId,
           'hour' : hour.toString(),
           'minute' : minute.toString(),
           'bidAmount' : bidAmount.toString(),

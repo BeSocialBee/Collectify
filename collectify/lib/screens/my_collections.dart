@@ -18,7 +18,6 @@ class MyCollection extends StatefulWidget {
 }
 
 class _MyCollectionState extends State<MyCollection> {
-  final List<CardData> cards = List.generate(20, (index) => CardData(index));
 
   late Future<List<dynamic>> userCards;
 
