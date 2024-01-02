@@ -21,8 +21,21 @@ import 'package:provider/provider.dart';
 import 'package:fancy_bottom_navigation_plus/fancy_bottom_navigation_plus.dart';
 import 'package:collectify/screens/market.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    // Replace with actual values
+    options: FirebaseOptions(
+      apiKey: "AIzaSyAfn5y0hEhLo-7z-qE4cOM-G7uzvCuAdSA",
+      appId: "collectify-e6bbe",
+      messagingSenderId: "4418173781",
+      projectId: "collectify-e6bbe",
+    ),
+  );
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -33,6 +46,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeFirebase(); // Call the function to initialize Firebase
+  }
+
+  // Function to initialize Firebase
+  Future<void> initializeFirebase() async {
+    try {
+      await Firebase.initializeApp();
+      print("Firebase initialized.");
+    } catch (e) {
+      print("Error initializing Firebase: $e");
+    }
+  }
 
   Widget? _getpage(int _currentIndex) {
     switch (_currentIndex) {

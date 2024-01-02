@@ -47,7 +47,9 @@ dependencies:
   petitparser: ^6.0.2
   random_avatar: ^0.0.8
   atomsbox: ^0.4.0
-
+  firebase_core: ^2.24.2  #FIREBASE ICIN EKLENDI
+  firebase_auth: ^4.15.3  #FIREBASE ICIN EKLENDI
+  cloud_firestore: ^4.13.6  #FIREBASE ICIN EKLENDI
 
 
 
