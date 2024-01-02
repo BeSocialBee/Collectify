@@ -216,7 +216,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                               child: FFButtonWidget(
                                 onPressed: () async {
-                                  Navigator.pushReplacementNamed(context, "/Home");
+                                  Navigator.pushReplacementNamed(context, "/MainPage");
                                   
                                 },
                                 text: 'Save Changes',

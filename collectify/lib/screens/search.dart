@@ -1,5 +1,3 @@
-import 'package:collectify/screens/card_in_auction.dart';
-
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -8,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -18,6 +18,73 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  List<String>? _results = ['Adam', 'Addi', 'Adrey'];
+  String _input = '';
+
+  _onSearchFieldChanged(String value) async {
+    setState(() {
+      _input = value;
+      if (value.isEmpty) {
+        // null is a sentinal value that allows us more control the UI
+        // for a better user experience. instead of showing 'No results for ''",
+        // if this is null, it will just show nothing
+        _results = null;
+      }
+    });
+
+    final results = await _searchCards(value);
+
+    setState(() {
+      _results = results;
+    });
+  }
+
+  Future<List<String>> _searchCards(String name) async {
+    // here, we leverage Supabase's (Postgres') full text search feature
+    // for super fast text searching without the need for something overkill for
+    // an example like this such as ElasticSearch or Algolia
+    //
+    // more info on Supabase's full text search here
+    // https://supabase.com/docs/guides/database/full-text-search
+
+    // WARNING: we aren't doing proper error handling here,
+    // as this is an example but typically we'd handle any exceptions via the
+    // callee of this function
+    // NOTE: this seaches our 'fts' (full text search column)
+    // NOTE: 'limit()' will improve the performance of the call as well.
+    // normally, we'd use a proper backend search index that would provide
+    // us with the most relevant results, vs simply using a wildcard match
+    // final result = 
+    //     await Supabase.instance.client
+    //     .from('names')
+    //     .select('fname, lname')
+    //     .textSearch('fts', "$name:*")
+    //     .limit(100)
+    //     .execute();
+
+    // // WARNING: we aren't doing proper response error code handling here.
+    // // normally, we're present some kind of feedback to the user if this fails
+    // // and optionally report it to an external tracking system such as Sentry,
+    // // Rollbar, etc
+    // if (result.error != null) {
+    //   print('error: ${result.error.toString()}');
+    //   return [];
+    // }
+
+    final List<String> names = [];
+
+    // convert results into a list here
+    // 'result.data' is a list of Maps, where each map represents a returned
+    // row in our database. each key of the map represents a table column
+    // for (var v in ((result.data ?? []) as List<dynamic>)) {
+    //   // NOTE: string formatting over many items can be a tad resource intensive
+    //   // but since this is across a limited set of results, it should be fine.
+    //   // alternatively, we can format this directly in the supabase query
+    //   names.add("${v['fname']} ${v['lname']}");
+    // }
+    return names;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +130,11 @@ class _SearchState extends State<Search> {
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 12, 8, 0),
                     child: TextFormField(
+                      onChanged: _onSearchFieldChanged,
                       controller: TextEditingController(),
                       focusNode: FocusNode(),
                       textCapitalization: TextCapitalization.words,
+                      autofocus: true,
                       obscureText: false,
                       decoration: InputDecoration(
                         labelText: 'Search for cards...',
@@ -149,6 +218,31 @@ class _SearchState extends State<Search> {
                 ),
               ],
             ),
+            Expanded(
+              child: (_results ?? []).isNotEmpty
+                  ? GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 4,
+                              crossAxisSpacing: 4,
+                              childAspectRatio: 0.8),
+                      itemBuilder: (BuildContext context, int index) {
+                        //var card = snapshot.data![index];
+                        if (1 == 1) {
+                        } else {}
+                      },
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 200),
+                      child: _results == null
+                          ? Container()
+                          : Center(
+                              child: Text("No results for '$_input'",
+                                  style: Theme.of(context).textTheme.caption),
+                            ),
+                    ),
+            ),
           ],
         ),
       ),
@@ -156,98 +250,3 @@ class _SearchState extends State<Search> {
   }
 }
 
-class Widget2 extends StatelessWidget {
-  const Widget2({
-    super.key,
-  });
-
-  Widget build(BuildContext context) {
-    return Container(
-      height: 800,
-      child: Card(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: FlutterFlowTheme.of(context).secondaryBackground,
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(3),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 9,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: Image.network(
-                    'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/00f79d75-1056-477a-845a-7017fca55d8a/free-metcon-4-womens-training-shoes-pxHVt9.png',
-                    width: double.infinity,
-                    height: 190,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 6, 0, 4),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            '\$126.20',
-                            style: FlutterFlowTheme.of(context)
-                                .headlineSmall
-                                .override(
-                                  fontFamily: 'Outfit',
-                                  color: Color(0xFF14181B),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                          ),
-                        ],
-                      ),
-                      FFButtonWidget(
-                        onPressed: () {
-                          //return ProductDetailsWidget();
-                        },
-                        text: 'Buy',
-                        options: FFButtonOptions(
-                          width: 70,
-                          height: 30,
-                          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                          iconPadding:
-                              EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                          color: FlutterFlowTheme.of(context).tertiary,
-                          textStyle:
-                              FlutterFlowTheme.of(context).titleSmall.override(
-                                    fontFamily: 'Outfit',
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                  ),
-                          elevation: 3,
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

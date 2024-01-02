@@ -13,111 +13,151 @@ class LeaderBoardScreen1 extends StatefulWidget {
 }
 
 class _LeaderBoardScreenState extends State<LeaderBoardScreen1> {
-  List<dynamic> leaderboardData = [];
+  //List<dynamic> leaderboardData = [];
 
   
+  late Future<List<dynamic>> leaderboardData;
 
+  @override
+  void initState() {
+    super.initState();
+    leaderboardData = getLeaderBoard();
+  }
+   
+     
+  Future<List<dynamic>> getLeaderBoard() async {
+    try {
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getLeaderboard';
+      var response = await http.get(
+        Uri.parse(apiUrl),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse =
+            jsonDecode(response.body); // Decode the response body as a Map
+        final List<dynamic> jsonArray = jsonResponse['usersData'] ??
+            []; // Access the "cardsData" key to get the array of cards
+        return jsonArray;
+      } else {
+        throw Exception('Failed to fetch cards.'); // Request failed, handle the error
+      }
+    } catch (e, stackTrace) {
+      print('Failed to get leaderboard.Error: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to get leaderboard. Error: $e');
+    }
+  }                                         
+                                                                                                   
+                            
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          title: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              'Leaderboard',
-              style: FlutterFlowTheme.of(context).titleLarge.override(
-                    fontFamily: 'Outfit',
-                    color: Color(0xFF14181B),
-                    fontSize: 28,
-                    fontWeight: FontWeight.w400,
-                  ),
-            ),
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            'Leaderboard',
+            style: FlutterFlowTheme.of(context).titleLarge.override(
+                  fontFamily: 'Outfit',
+                  color: Color(0xFF14181B),
+                  fontSize: 28,
+                  fontWeight: FontWeight.w400,
+                ),
           ),
-          
-          centerTitle: true,
-          elevation: 2,
         ),
-      body: //leaderboardData.isEmpty
-          // ? Center(child: CircularProgressIndicator()):
-          SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+        centerTitle: true,
+        elevation: 2,
+      ),
+      body: FutureBuilder(
+        future: leaderboardData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
+              child: Text('No data available.'),
+            );
+          } else {
+            var user1 = snapshot.data![0];
+            var user2 = snapshot.data![1];
+            var user3 = snapshot.data![2];
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   children: [
-                    WinnerContainer(
-                      // İkinci kişinin bilgileri
-                      url: 'images/seyf.jpg',
-                      winnerName: 'Name',
-                      height: 120,
-                      rank: '2',
-                      color: Colors.green,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          WinnerContainer(
+                            url: user2['userURL'],
+                            winnerName: user2['userName'],
+                            height: 120,
+                            rank: '2',
+                            color: Colors.green,
+                          ),
+                          WinnerContainer(
+                            // Birinci kişinin bilgileri
+                            isFirst: true,
+                            color: Colors.orange,
+                            url: user1['userURL'],
+                            winnerName: user1['userName'],
+                          ),
+                          WinnerContainer(
+                            //Üçüncü kişinin bilgileri
+                            url: user3['userURL'],
+                            winnerName: user3['userName'],
+                            height: 120,
+                            rank: '3',
+                            color: Colors.blue,
+                          ),
+                        ],
+                      ),
                     ),
-                    WinnerContainer(
-                      // Birinci kişinin bilgileri
-                      isFirst: true,
-                      color: Colors.orange,
-                      winnerName: 'Name',
+                    const SizedBox(
+                      height: 20.0,
                     ),
-                    WinnerContainer(
-                      //Üçüncü kişinin bilgileri
-                      winnerName: 'Name',
-                      url: 'images/seyf.jpg',
-                      height: 120,
-                      rank: '3',
-                      color: Colors.blue,
-                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          height: 360.0,
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0)),
+                              color: Colors.white),
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.length - 3,
+                              itemBuilder: (context, index) {
+                                var user = snapshot.data![index + 3];
+                                return ContestantList(
+                                  url: user['userURL'],
+                                  name: user['userName'],
+                                  rank: '${index + 4}',
+                                );
+                              }),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0)),
-                    gradient: LinearGradient(colors: [
-                      Colors.yellow.shade600,
-                      Colors.orange,
-                      Colors.red
-                    ])),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Container(
-                    height: 360.0,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0)),
-                        color: MyColors.calculatorScreen),
-                    child: ListView.builder(
-                        itemCount: 47,
-                        //? 50
-                        //: leaderboardData.length,
-                        itemBuilder: (context, index) {
-                          //var item = leaderboardData[index];
-                          return ContestantList(
-                            url: 'images/seyf.jpg',
-                            name: 'Name',
-                            rank: '${index + 4}',
-                          );
-                        }),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
   }

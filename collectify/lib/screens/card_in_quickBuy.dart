@@ -9,16 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class QuickBuyScreenWidget extends StatefulWidget {
+  final String documentID;
   // String cardUrl;
   // String cardName;
-  // String cardPrice;
   QuickBuyScreenWidget({
-    Key? key,
+    Key? key, required this.documentID,
     // required this.cardUrl,
     // required this.cardName,
-    // required this.cardPrice
   }) : super(key: key);
 
   @override
@@ -27,10 +28,16 @@ class QuickBuyScreenWidget extends StatefulWidget {
 
 class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  static late String documentID;
+  late Future<Map<String, dynamic>> fixedCard;
+
 
   @override
   void initState() {
     super.initState();
+    documentID = widget.documentID;
+    updateViewCard(documentID);
+    fixedCard = getFixedCardbyID(documentID);
   }
 
   @override
@@ -85,7 +92,25 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Column(
+          child: FutureBuilder(
+          future: fixedCard,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text('No data available.'),
+              );
+            } else {
+              var card = snapshot.data!;
+
+            return Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
@@ -102,7 +127,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                     ),
                   ),
                   child: Container(
-                    width: 375,
+                    width: double.infinity,
                     height: 532,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).tertiary,
@@ -144,7 +169,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
-                              'Card Name',
+                              '${card['cardTitle']}',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
@@ -166,8 +191,8 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: Image.network(
-                                        'https://picsum.photos/seed/90/600',
-                                        width: 330,
+                                        '${card['cardURL']}',
+                                        width: double.infinity,
                                         height: 330,
                                         fit: BoxFit.cover,
                                       ),
@@ -192,7 +217,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                       child: Align(
                                         alignment: AlignmentDirectional(0, 0),
                                         child: Text(
-                                          '10',
+                                          '${card['cardQuantity']}',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
@@ -224,7 +249,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0, 10, 0, 0),
                                       child: Text(
-                                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur consequat nulla ac magna pharetra fringilla. Vestibulum venenatis at massa vel blandit. Aliquam in elementum felis. Donec est ligula, hendrerit a est at, vulputate posuere elit. Morbi varius consequat mollis. Aenean venenatis hendrerit diam. Suspendisse suscipit vel leo a vestibulum. Integer venenatis sit amet ex at tempor. Quisque orci dui, vestibulum et mollis in, sodales quis est. \n',
+                                        'Description: ${card['cardDescription']}',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -258,7 +283,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         6, 0, 0, 0),
                                     child: Text(
-                                      'Common',
+                                      '${card['cardRarity']}',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -283,11 +308,11 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              CollectionScreen()));
+                                              CollectionScreen(collectionName: card['cardCollectionName'])));
                                 },
                                 child: ListTile(
                                   title: Text(
-                                    'Collection Name: ',
+                                    '${card['cardCollectionName']}',
                                     style: FlutterFlowTheme.of(context)
                                         .titleLarge
                                         .override(
@@ -316,7 +341,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                 child: Material(
                   color: Colors.transparent,
                   elevation: 15,
@@ -329,7 +354,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                     ),
                   ),
                   child: Container(
-                    width: 345,
+                    width: double.infinity,
                     height: 78,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).tertiary,
@@ -347,7 +372,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(30, 0, 10, 0),
                           child: Text(
-                            '127',
+                            '${card['cardPrice']}',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
@@ -378,6 +403,7 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                     child: Padding(
                                       padding: MediaQuery.viewInsetsOf(context),
                                       child: Container(
+                                        width: double.infinity,
                                         height: 200,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
@@ -402,7 +428,8 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                                                   .fromSTEB(0, 15, 0, 0),
                                               child: FFButtonWidget(
                                                 onPressed: () async {
-                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);                                            
+                                                  buyCard(documentID);
                                                 },
                                                 text: 'Confirm',
                                                 options: FFButtonOptions(
@@ -472,9 +499,97 @@ class _QuickBuyScreenWidgetState extends State<QuickBuyScreenWidget> {
                 ),
               ),
             ],
-          ),
+          );
+            }
+          },
         ),
       ),
-    );
+    ));
   }
 }
+Future<Map<String, dynamic>> getFixedCardbyID(documentID) async {
+  try {
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getFixedCardbyID';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'documentID': documentID,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final Map<String, dynamic> jsonArray = jsonResponse['cardData'] ?? {};
+      return jsonArray;
+    } else {
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get card data');
+    }
+  } catch (e) {
+    print('Error loading profile: $e');
+    throw Exception('Failed to get card data');
+  }
+}
+
+
+Future<void> buyCard(documentID) async {
+  try {
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    //print(userID);
+    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+    print("------------------");
+    print(documentID);
+
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userHandleBuy';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'documentID': documentID,
+        'userID': userID,
+      },
+    );
+
+    // Check th*e response status
+    if (response.statusCode == 200) {
+      print('Success response: ${response.statusCode}');
+    } else {
+      // Request failed, handle the error
+      print('Error response: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Handle sign-in errors, such as invalid credentials
+    print('Error signing in: $e');
+  }
+}
+
+  // When card is viewed by user, this card view will increase to use in home page
+  Future<void> updateViewCard(documentID) async {
+    try {
+
+      print(documentID);
+      print("burdaaa");
+
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/cardViewed';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'documentID': documentID,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Succesfully viewed');
+      } else {
+        // Request failed, handle the error
+        throw Exception('Failed to fetch cards.');
+      }
+    } catch (e, stackTrace) {
+      print('Failed to fetch cards fixedd. Error: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to fetch cards fixedd. Error: $e');
+    }
+  }

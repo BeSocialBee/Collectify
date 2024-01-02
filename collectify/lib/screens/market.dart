@@ -1,3 +1,5 @@
+//import 'dart:html';
+
 import 'package:collectify/screens/card_details.dart';
 import 'package:collectify/screens/card_in_auction.dart';
 import 'package:collectify/screens/card_in_quickBuy.dart';
@@ -31,38 +33,47 @@ class _ListProductsWidgetState extends State<Market>
 
   late Future<List<dynamic>> auctionCards;
   late Future<List<dynamic>> fixedPriceCards;
+  late Future<Map<String, dynamic>> user;
 
-  // When card is viewed by user, this card view will increase to use in home page
-  Future<void> updateViewCard(cardId) async {
-    try {
-      String apiUrl =
-          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/cardViewed';
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        body: {
-          'cardId': cardId,
-        },
-      );
 
-      if (response.statusCode == 200) {
-        print('Succesfully viewed');
-      } else {
-        // Request failed, handle the error
-        throw Exception('Failed to fetch cards.');
-      }
-    } catch (e, stackTrace) {
-      print('Failed to fetch cards fixedd. Error: $e');
-      print('Stack trace: $stackTrace');
-      throw Exception('Failed to fetch cards fixedd. Error: $e');
+  Future<Map<String, dynamic>> getUser() async {
+  try {
+    
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getUser';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'userID': userID,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final Map<String, dynamic> jsonArray = jsonResponse['userData'] ?? {};
+      return jsonArray;
+    } else {
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get user data');
     }
+  } catch (e) {
+    print('Error loading profile: $e');
+    throw Exception('Failed to get user data');
   }
-  // Define the signIn function
+}
+
+
+
 
   @override
   void initState() {
     super.initState();
     fixedPriceCards = getFixedMarket();
     auctionCards = getAuctionMarket();
+    user = getUser();
   }
 
   // Define the getUserInfo function
@@ -115,7 +126,7 @@ class _ListProductsWidgetState extends State<Market>
 
         // Optional: You might want to convert each item in the list to a strongly typed object
         //final List<Map<String, dynamic>> cardList = jsonArray.map((item) => item as Map<String, dynamic>).toList();
-        print(jsonArray);
+        //print(jsonArray);
         return jsonArray;
       } else {
         // Request failed, handle the error
@@ -180,10 +191,32 @@ class _ListProductsWidgetState extends State<Market>
                       padding: const EdgeInsets.only(left: 22, right: 12),
                       child: Container(
                         height: 40,
-                        child: Row(
+                        child: 
+                          
+                        FutureBuilder(
+                          future: user,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                child: Text(''),
+                              );
+                            } else {
+                              var userrr = snapshot.data!;
+                              return Row(
                           children: [
+                            
                             Text(
-                              '123',
+                              userrr['balance'].toStringAsFixed(2),
                               style: FlutterFlowTheme.of(context)
                                   .titleLarge
                                   .override(
@@ -201,7 +234,7 @@ class _ListProductsWidgetState extends State<Market>
                               size: 30,
                             ),
                           ],
-                        ),
+                        );}},),
                       ),
                     ),
                     shape: RoundedRectangleBorder(
@@ -275,7 +308,7 @@ class _ListProductsWidgetState extends State<Market>
                             } else if (!snapshot.hasData ||
                                 snapshot.data!.isEmpty) {
                               return Center(
-                                child: Text('No data available.'),
+                                child: Text(''),
                               );
                             } else {
                               return Padding(
@@ -292,7 +325,7 @@ class _ListProductsWidgetState extends State<Market>
                                       (BuildContext context, int index) {
                                     var card = snapshot.data![index];
                                     return AuctionCardWidget(
-                                      cardPrice: card['cardPrice'],
+                                      cardPrice: card['currentBid'],
                                       cardUrl: card['cardURL'],
                                       cardId: card['cardID'],
                                       documentID: card['documentID'],  
@@ -334,8 +367,9 @@ class _ListProductsWidgetState extends State<Market>
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       var card = snapshot.data![index];
+
                                       return QuickBuyCardWidget(
-                                        cardPrice: card['cardPrice'],
+                                        cardPrice: card['cardPrice'].toDouble(),
                                         cardUrl: card['cardURL'],
                                         cardId: card['cardID'],
                                         documentID: card['documentID'],  
@@ -360,7 +394,7 @@ class _ListProductsWidgetState extends State<Market>
 
 class Widget1 extends StatelessWidget {
   final String? cardUrl;
-  int cardPrice = 0;
+  final double? cardPrice;
   final String? cardId;
   final String? documentID;
 
@@ -373,6 +407,9 @@ class Widget1 extends StatelessWidget {
   });
 
   Widget build(BuildContext context) {
+
+    print(documentID);
+
     return GestureDetector(
       onTap: () {
         // Navigator.push(
@@ -435,7 +472,6 @@ class Widget1 extends StatelessWidget {
                         ),
                         FFButtonWidget(
                           onPressed: () {
-                            buyCard(cardId);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -482,7 +518,7 @@ class Widget1 extends StatelessWidget {
 
 class QuickBuyCardWidget extends StatelessWidget {
   final String? cardUrl;
-  int cardPrice = 0;
+  final double? cardPrice;
   final String? cardId; 
   final String? documentID;
 
@@ -501,14 +537,14 @@ class QuickBuyCardWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    QuickBuyScreenWidget())); // Constructer içine gerekli inputları yaz
+                    QuickBuyScreenWidget(documentID:documentID!,))); // Constructer içine gerekli inputları yaz
       },
       child: Container(
-        height: 800,
-        child: Card(
+        height: 800,    
+        child: Card(     
           clipBehavior: Clip.antiAliasWithSaveLayer,
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          elevation: 3,
+          elevation: 3,          
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -556,17 +592,17 @@ class QuickBuyCardWidget extends StatelessWidget {
                           ],
                         ),
                         FFButtonWidget(
-                          onPressed: () {
-                            buyCard(cardId);
+                          onPressed: () async {
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        QuickBuyScreenWidget()));
+                                        QuickBuyScreenWidget(documentID:documentID!)));
                           },
-                          text: 'Bid',
+                          text: 'View',
                           options: FFButtonOptions(
-                            width: 70,
+                            width: 120,
                             height: 30,
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
@@ -603,7 +639,7 @@ class QuickBuyCardWidget extends StatelessWidget {
 
 class AuctionCardWidget extends StatelessWidget {
   final String? cardUrl;
-  int cardPrice = 0;
+  final double? cardPrice;
   final String? cardId;
   final String? documentID;
 
@@ -675,14 +711,13 @@ class AuctionCardWidget extends StatelessWidget {
                         ),
                         FFButtonWidget(
                           onPressed: () {
-                            buyCard(cardId);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         AuctionScreenWidget(documentID:documentID!)));
                           },
-                          text: 'Bid',
+                          text: 'View',
                           options: FFButtonOptions(
                             width: 70,
                             height: 30,
@@ -719,30 +754,3 @@ class AuctionCardWidget extends StatelessWidget {
   }
 }
 
-Future<void> buyCard(cardId) async {
-  try {
-    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
-    //print(userID);
-
-    String apiUrl =
-        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userHandleBuy';
-    var response = await http.post(
-      Uri.parse(apiUrl),
-      body: {
-        'cardId': cardId,
-        //'userID': userID,
-      },
-    );
-
-    // Check th*e response status
-    if (response.statusCode == 200) {
-      print('Success response: ${response.statusCode}');
-    } else {
-      // Request failed, handle the error
-      print('Error response: ${response.statusCode}');
-    }
-  } catch (e) {
-    // Handle sign-in errors, such as invalid credentials
-    print('Error signing in: $e');
-  }
-}

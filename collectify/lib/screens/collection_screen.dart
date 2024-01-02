@@ -16,92 +16,57 @@ import 'package:line_icons/line_icons.dart';
 //import 'package:collectify/sharedpref_util.dart';
 
 class CollectionScreen extends StatefulWidget {
-  //String collectionName;
+  final String collectionName;
 
   CollectionScreen({
     Key? key,
-    //required this.collectionName
+    required this.collectionName,
   }) : super(key: key);
 
   @override
   _CollectionScreenState createState() => _CollectionScreenState();
 }
 
-class _CollectionScreenState extends State<CollectionScreen>
-    with TickerProviderStateMixin {
+class _CollectionScreenState extends State<CollectionScreen> with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  late Future<List<dynamic>> auctionCards;
-  late Future<List<dynamic>> fixedPriceCards;
+  static late String collectionName;
+    late Future<List<dynamic>> collectionCards;
 
   @override
   void initState() {
     super.initState();
-    fixedPriceCards = getFixedMarket();
-    auctionCards = getAuctionMarket();
+    collectionName = widget.collectionName;
+
+
+    collectionCards = getCollectionCards(collectionName);
   }
 
-  // Define the getUserInfo function
-  Future<List<dynamic>> getFixedMarket() async {
-    try {
-      String apiUrl =
-          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userFixedMarketCards';
-      var response = await http.get(
-        Uri.parse(apiUrl),
-      );
 
-      if (response.statusCode == 200) {
-        // Decode the response body as a Map
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+  Future<List<dynamic>> getCollectionCards(collectionName) async {
+  try {
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getCollectionCards';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'collectionName': collectionName,
+      },
+    );
 
-        // Access the "cardsData" key to get the array of cards
-        final List<dynamic> jsonArray = jsonResponse['cardsData'] ?? [];
-
-        // Optional: You might want to convert each item in the list to a strongly typed object
-        //final List<Map<String, dynamic>> cardList = jsonArray.map((item) => item as Map<String, dynamic>).toList();
-        //print(jsonArray);
-        return jsonArray;
-      } else {
-        // Request failed, handle the error
-
-        throw Exception('Failed to fetch cards.');
-      }
-    } catch (e, stackTrace) {
-      print('Failed to fetch cards fixedd. Error: $e');
-      print('Stack trace: $stackTrace');
-      throw Exception('Failed to fetch cards fixedd. Error: $e');
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final List<dynamic> jsonArray = jsonResponse['cardsData'] ?? [];
+      return jsonArray;
+    } else {
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get card data');
     }
+  } catch (e) {
+    print('Error loading profile: $e');
+    throw Exception('Failed to get card data');
   }
+}
 
-// Define the getUserInfo function
-  Future<List<dynamic>> getAuctionMarket() async {
-    try {
-      String apiUrl =
-          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getAllAuctions';
-      var response = await http.get(
-        Uri.parse(apiUrl),
-      );
-
-      if (response.statusCode == 200) {
-        // Decode the response body as a Map
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-        // Access the "cardsData" key to get the array of cards
-        final List<dynamic> jsonArray = jsonResponse['cardsData'] ?? [];
-
-        // Optional: You might want to convert each item in the list to a strongly typed object
-        //final List<Map<String, dynamic>> cardList = jsonArray.map((item) => item as Map<String, dynamic>).toList();
-        print(jsonArray);
-        return jsonArray;
-      } else {
-        // Request failed, handle the error
-
-        throw Exception('Failed to fetch cards.');
-      }
-    } catch (e) {
-      throw Exception('Failed to fetch cards auctionn.');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +115,7 @@ class _CollectionScreenState extends State<CollectionScreen>
           title: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              'Collection name',
+              "$collectionName",
               style: FlutterFlowTheme.of(context).titleLarge.override(
                     fontFamily: 'Outfit',
                     color: Color(0xFF14181B),
@@ -172,8 +137,8 @@ class _CollectionScreenState extends State<CollectionScreen>
                     alignment: Alignment(0, 0),
                   ),
                   Expanded(
-                    child: FutureBuilder<List<dynamic>>(
-                      future: fixedPriceCards,
+                    child: FutureBuilder(
+                      future: collectionCards,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -226,7 +191,7 @@ class _CollectionScreenState extends State<CollectionScreen>
 
 class CollectionScreenCardWidget extends StatelessWidget {
   final String? cardUrl;
-  int cardPrice = 0;
+  final int? cardPrice;
   final String? cardId;
 
   CollectionScreenCardWidget({

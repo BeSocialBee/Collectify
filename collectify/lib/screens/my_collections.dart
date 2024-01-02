@@ -12,7 +12,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class MyCollection extends StatefulWidget {
-  static String id = 'my_collection_screen';
   @override
   State<MyCollection> createState() => _MyCollectionState();
 }
@@ -20,12 +19,44 @@ class MyCollection extends StatefulWidget {
 class _MyCollectionState extends State<MyCollection> {
 
   late Future<List<dynamic>> userCards;
+  
+  late Future<Map<String, dynamic>> user;
 
   @override
   void initState() {
     super.initState();
     userCards = getUserCards();
+    user = getUser();
   }
+
+  Future<Map<String, dynamic>> getUser() async {
+  try {
+    
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getUser';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'userID': userID,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final Map<String, dynamic> jsonArray = jsonResponse['userData'] ?? {};
+      return jsonArray;
+    } else {
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get user data');
+    }
+  } catch (e) {
+    print('Error loading profile: $e');
+    throw Exception('Failed to get user data');
+  }
+}
 
   // Define the getUserInfo function
   Future<List<dynamic>> getUserCards() async {
@@ -79,48 +110,6 @@ class _MyCollectionState extends State<MyCollection> {
                   ),
             ),
           ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: [
-                  Card(
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 22, right: 12),
-                      child: Container(
-                        height: 40,
-                        child: Row(
-                          children: [
-                            Text(
-                              '123',
-                              style: FlutterFlowTheme.of(context)
-                                  .titleLarge
-                                  .override(
-                                    fontFamily: 'Outfit',
-                                    color: Color(0xFF14181B),
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            LineIcon.coins(
-                              color: Colors.yellow,
-                              size: 30,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30))),
-                  )
-                ],
-              ),
-            ),
-          ],
           centerTitle: true,
           elevation: 2,
         ),

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:collectify/screens/card_in_quickBuy.dart';
+
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -15,7 +17,12 @@ import 'package:http/http.dart' as http;
 import 'package:fluttermoji/fluttermoji.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  //final String userName;
+
+  const Home({
+    Key? key,
+    //required this.userName
+  }) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -26,16 +33,45 @@ class _HomeState extends State<Home> {
 
   late Future<List<dynamic>> newListings;
   late Future<List<dynamic>> mostVieweds;
+  late Future<Map<String, dynamic>> user;
 
   @override
   void initState() {
     super.initState();
     newListings = getNewListings();
-    print(newListings);
-
     mostVieweds = getMostVieweds();
-    print(mostVieweds);
+    user = getUser();
   }
+
+  Future<Map<String, dynamic>> getUser() async {
+  try {
+    
+    //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+    var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+
+    String apiUrl =
+        'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getUser';
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'userID': userID,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final Map<String, dynamic> jsonArray = jsonResponse['userData'] ?? {};
+      return jsonArray;
+    } else {
+      print('Error response: ${response.statusCode}');
+      throw Exception('Failed to get user data');
+    }
+  } catch (e) {
+    print('Error loading profile: $e');
+    throw Exception('Failed to get user data');
+  }
+}
+
 
   Future<List<dynamic>> getNewListings() async {
     try {
@@ -122,7 +158,28 @@ class _HomeState extends State<Home> {
                     ),
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                      child: Row(
+                      child: 
+                      
+                      FutureBuilder(
+                          future: user,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                child: Text(''),
+                              );
+                            } else {
+                              var userrr = snapshot.data!;
+                              return Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
@@ -138,13 +195,13 @@ class _HomeState extends State<Home> {
                               },
                               child: FluttermojiCircleAvatar(
                                 backgroundColor: Colors.grey[200],
-                                radius: 50,
+                                radius: 25,
                               ),
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              'Welcome, Seyfullah',
+                              "Welcome, ${userrr['username']}",
                               style: FlutterFlowTheme.of(context)
                                   .headlineMedium
                                   .override(
@@ -173,7 +230,9 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ],
-                      ),
+                      );
+
+  }})
                     ),
                   ),
                   content: Column(
@@ -211,7 +270,7 @@ class _HomeState extends State<Home> {
                                 child: Text('No data available.'),
                               );
                             } else {
-                              print(snapshot.data!.length);
+                             // print(snapshot.data!.length);
                               return Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
@@ -229,6 +288,7 @@ class _HomeState extends State<Home> {
                                       return NewListingCard(
                                           cardName: card['cardTitle'],
                                           cardPrice: card['cardPrice'],
+                                          documentID: card['documentID'],
                                           cardUrl: card['cardURL']);
                                     },
                                   ),
@@ -293,7 +353,8 @@ class _HomeState extends State<Home> {
                                           return MostViewedCard(
                                               cardName: card['cardTitle'],
                                               cardPrice: card['cardPrice'],
-                                              cardUrl: card['cardURL']);
+                                              cardUrl: card['cardURL'],
+                                              viewTimes: card['viewTimes']);
                                         },
                                       ),
                                     );
@@ -318,177 +379,148 @@ class MostViewedCard extends StatelessWidget {
   final String cardName;
   final String cardUrl;
   final int cardPrice;
+  final int viewTimes;
+  //final String cardRarity;
 
   MostViewedCard(
       {super.key,
+      //required this.cardRarity,
       required this.cardName,
       required this.cardPrice,
-      required this.cardUrl});
+      required this.cardUrl,
+      required this.viewTimes
+      });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-      child: Container(
-        width: 220,
-        height: 240,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 4,
-              color: Color(0x33000000),
-              offset: Offset(0, 2),
-            )
-          ],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Color(0xFFE5E7EB),
-            width: 1,
+    return GestureDetector(
+      onTap: () {
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) =>
+        //             QuickBuyScreenWidget(documentID: ,))); // Constructer içine gerekli inputları yaz
+      },
+      child: Padding(
+        padding: EdgeInsetsDirectional.fromSTEB(40, 5, 40, 5),
+        child: Container(
+          width: 220,
+          height: 340,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 4,
+                color: Color(0x33000000),
+                offset: Offset(0, 2),
+              )
+            ],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Color(0xFFE5E7EB),
+              width: 1,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        '$cardUrl',
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          '$cardUrl',
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(1, -1),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 5,
-                              sigmaY: 2,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: Color(0x9AFFFFFF),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Color(0xFFE5E7EB),
-                                      width: 2,
+                      Align(
+                        alignment: AlignmentDirectional(1, -1),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 5,
+                                sigmaY: 2,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: Color(0x9AFFFFFF),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Color(0xFFE5E7EB),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    alignment: AlignmentDirectional(0, 0),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8, 0, 8, 0),
+                                      child: Text(
+                                        '$viewTimes  times viewed',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Plus Jakarta Sans',
+                                              color: Color(0xFF15161E),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
                                     ),
                                   ),
-                                  alignment: AlignmentDirectional(0, 0),
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8, 0, 8, 0),
-                                    child: Text(
-                                      'Legendary',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Plus Jakarta Sans',
-                                            color: Color(0xFF15161E),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                child: Text(
-                  '$cardName',
-                  style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Outfit',
-                        color: Color(0xFF15161E),
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
-                    child: RichText(
-                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '\$ $cardPrice',
-                            style: TextStyle(
-                              color: Color(0xFF6F61EF),
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' ',
-                            style: FlutterFlowTheme.of(context)
-                                .labelSmall
-                                .override(
-                                  fontFamily: 'Outfit',
-                                  color: Color(0xFF606A85),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                          )
-                        ],
-                        style:
-                            FlutterFlowTheme.of(context).labelMedium.override(
-                                  fontFamily: 'Outfit',
-                                  color: Color(0xFF606A85),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                      ),
-                    ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
-                    child: RichText(
-                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '',
-                            style: TextStyle(),
-                          )
-                        ],
-                        style:
-                            FlutterFlowTheme.of(context).labelMedium.override(
-                                  fontFamily: 'Outfit',
-                                  color: Color(0xFF606A85),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                ),
+                // Row(
+                //    mainAxisSize: MainAxisSize.max,
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: [
+                //     Padding(
+                //       padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+                //       child: Text(
+                //         '$cardName',
+                //         style: FlutterFlowTheme.of(context).titleLarge.override(
+                //               fontFamily: 'Outfit',
+                //               color: Color(0xFF15161E),
+                //               fontSize: 22,
+                //               fontWeight: FontWeight.w500,
+                //             ),
+                //       ),
+                //     ),
+                //     Padding(
+                //       padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
+                //       child: Text(
+                //         '\$ $cardPrice',
+                //         style: FlutterFlowTheme.of(context).titleLarge.override(
+                //               fontFamily: 'Outfit',
+                //               color: Color(0xFF15161E),
+                //               fontSize: 22,
+                //               fontWeight: FontWeight.w500,
+                //             ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
           ),
         ),
       ),
@@ -500,138 +532,200 @@ class NewListingCard extends StatelessWidget {
   final String cardName;
   final String cardUrl;
   final int cardPrice;
+  final String documentID;
 
   NewListingCard(
       {super.key,
+      required this.documentID,
       required this.cardName,
       required this.cardPrice,
       required this.cardUrl});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
-      child: Container(
-        width: 220,
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Color(0xFFE5E7EB),
-            width: 2,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    QuickBuyScreenWidget(documentID: documentID,))); // Constructer içine gerekli inputları yaz
+      },
+      child: Padding(
+        padding: EdgeInsetsDirectional.fromSTEB(6, 12, 6, 12),
+        child: Container(
+          width: 220,
+          height: 120,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Color(0xFFE5E7EB),
+              width: 2,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        '$cardUrl',
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          '$cardUrl',
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    Align(
-                      alignment: AlignmentDirectional(1, -1),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 5,
-                              sigmaY: 2,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      16, 0, 0, 0),
-                                  child: Container(
-                                    width: 36,
-                                    height: 36,
-                                    decoration: BoxDecoration(
-                                      color: Color(0x9AFFFFFF),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Color(0xFFE5E7EB),
-                                        width: 2,
-                                      ),
-                                    ),
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(2),
-                                      child: Icon(
-                                        Icons.favorite_border,
-                                        color: Color(0xFF15161E),
-                                        size: 20,
-                                      ),
-                                    ),
+                      Align(
+                        alignment: AlignmentDirectional(1, -1),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 5,
+                                sigmaY: 2,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        16, 0, 0, 0),
+                                    // child: Container(
+                                    //   width: 36,
+                                    //   height: 36,
+                                    //   decoration: BoxDecoration(
+                                    //     color: Color(0x9AFFFFFF),
+                                    //     borderRadius: BorderRadius.circular(12),
+                                    //     border: Border.all(
+                                    //       color: Color(0xFFE5E7EB),
+                                    //       width: 2,
+                                    //     ),
+                                    //   ),
+                                    //   alignment: AlignmentDirectional(0, 0),
+                                    //   child: Padding(
+                                    //     padding: EdgeInsets.all(2),
+                                    //     child: Icon(
+                                    //       Icons.favorite_border,
+                                    //       color: Color(0xFF15161E),
+                                    //       size: 20,
+                                    //     ),
+                                    //   ),
+                                    // ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+                            child: Text(
+                              '$cardName',
+                              style: FlutterFlowTheme.of(context)
+                                  .titleLarge
+                                  .override(
+                                    fontFamily: 'Outfit',
+                                    color: Color(0xFF15161E),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
+                            child: RichText(
+                              textScaleFactor:
+                                  MediaQuery.of(context).textScaleFactor,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: '\$ $cardPrice',
+                                    style: TextStyle(
+                                      color: Color(0xFF6F61EF),
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' ',
+                                    style: FlutterFlowTheme.of(context)
+                                        .labelSmall
+                                        .override(
+                                          fontFamily: 'Outfit',
+                                          color: Color(0xFF606A85),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  )
+                                ],
+                                style: FlutterFlowTheme.of(context)
+                                    .labelMedium
+                                    .override(
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF606A85),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: FFButtonWidget(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QuickBuyScreenWidget(documentID: documentID,)));
+                        },
+                        text: 'Buy',
+                        options: FFButtonOptions(
+                          width: 80,
+                          height: 40,
+                          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                          iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                          color: FlutterFlowTheme.of(context).tertiary,
+                          textStyle:
+                              FlutterFlowTheme.of(context).titleSmall.override(
+                                    fontFamily: 'Outfit',
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                  ),
+                          elevation: 3,
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                child: Text(
-                  '$cardName',
-                  style: FlutterFlowTheme.of(context).titleLarge.override(
-                        fontFamily: 'Outfit',
-                        color: Color(0xFF15161E),
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
-                child: RichText(
-                  textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '\$ $cardPrice',
-                        style: TextStyle(
-                          color: Color(0xFF6F61EF),
-                        ),
-                      ),
-                      TextSpan(
-                        text: ' ',
-                        style: FlutterFlowTheme.of(context).labelSmall.override(
-                              fontFamily: 'Outfit',
-                              color: Color(0xFF606A85),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                      )
-                    ],
-                    style: FlutterFlowTheme.of(context).labelMedium.override(
-                          fontFamily: 'Outfit',
-                          color: Color(0xFF606A85),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

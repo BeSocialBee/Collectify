@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -27,61 +29,35 @@ class _MyAccountState extends State<MyAccount>
   String username ="";
   String email ="";
   String avatar_id ="";
-  int balance = 0;
+  double balance = 0;
   int score = 0;
 
   @override
   void initState() {
     super.initState();
-    getUserInfo();
   }
 
-
-
-  // Define the getUserInfo function
-  Future<void> getUserInfo() async {
-    try {
-      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
-      var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
-      print(userID);
-      String apiUrl = 'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userProfileInfo';
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        body: {
-          'userID': userID,
-        },
-      );
-
-      // Check the response status
-      if (response.statusCode == 200) {
-        //print(response.body);
-        // Request successful, you can handle the response data here
-        Map<String, dynamic> responseData = json.decode(response.body);
-        username = responseData['usersData']['username'];
-        email = responseData['usersData']['email'];
-        avatar_id = responseData['usersData']['avatar_id'];
-        balance = responseData['usersData']['balance'];
-        score = responseData['usersData']['score'];
-      } else {
-        // Request failed, handle the error
-        print('Error response: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Handle errors, such as invalid credentials
-      print('Errorloading profile: $e');
-    }
-  }
-
-  @override
+@override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: getUserInfo(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance.collection('users').doc("luK4dXzgq9eVH7ZL0NczLWCxe8J3").snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // or another loading indicator
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          if (snapshot.hasData && snapshot.data != null) {
+            // Update the state with the new data
+            Map<String, dynamic> responseData = snapshot.data!.data()!;
+            username = responseData['username'];
+            email = responseData['email'];
+            avatar_id = responseData['avatar_id'];
+            balance = responseData['balance'];
+            score = responseData['score'];
+          }
+
+          // Continue building your profile page using the updated data
           return buildProfilePage();
         }
       },
@@ -196,7 +172,7 @@ class _MyAccountState extends State<MyAccount>
                       ),
                     ),
                     Text(
-                      '$balance', // Use the balance variable
+                      '${balance.toStringAsFixed(2)}', // Use the balance variable
                       style: TextStyle(
                         fontFamily: 'Outfit',
                         color: Color(0xFF57636C),
@@ -524,7 +500,7 @@ class _MyAccountState extends State<MyAccount>
                   padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 30),
                   child: FFButtonWidget(
                     onPressed: () {
-                      print('Button pressed ...');
+                      Navigator.pushReplacementNamed(context, "/Login");
                     },
                     text: 'Log Out',
                     options: FFButtonOptions(

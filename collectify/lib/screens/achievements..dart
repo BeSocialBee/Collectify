@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class Achievements extends StatefulWidget {
   const Achievements({super.key});
@@ -8,147 +11,195 @@ class Achievements extends StatefulWidget {
 }
 
 class _AchievementsState extends State<Achievements> {
-  final List<String> achievementList = [
-    "Achievement 1",
-    "Achievement 2",
-    "Achievement 3",
-    "Achievement 4",
-    "Achievement 5",
-    "Achievement 6",
-    "Achievement 7",
-    "Achievement 8",
-    "Achievement 9",
-    "Achievement 10",
-    "Achievement 11",
-    "Achievement 12",
-    "Achievement 13",
-    "Achievement 14",
-    "Achievement 15",
-    "Achievement 16",
-    "Achievement 17",
-    "Achievement 18",
-    "Achievement 19",
-    "Achievement 20",
-    "Achievement 21",
-    "Achievement 22",
-    "Achievement 23",
-    "Achievement 24",
-    "Achievement 25",
-    "Achievement 26",
-    "Achievement 27",
-    "Achievement 28",
-    "Achievement 29",
-    "Achievement 30",
-  ];
-  List<int> isAchieved = [
-    1,
-    0,
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    0
-  ];
+  late Future<List<dynamic>> achievementList;
+  late Future<List<dynamic>> userAchievementList;
+  late Future<List<dynamic>> isAchieved;
+
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      // bottomNavigationBar: myBottomNavigationBar(),
-      appBar: AppBar(
-        title: const Text("Achievements"),
-      ),
-      body: Padding(
-        padding:
-            const EdgeInsets.only(top: 20.0, right: 10, left: 10, bottom: 20),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 20.0,
-            crossAxisSpacing: 20.0,
-          ),
-          itemCount: 30,
-          itemBuilder: (context, index) {
-            if (isAchieved[index] == 0) {
-              return AchievedWidget(
-                  achievementList: achievementList, index: index);
-            } else {
-              return UnachievedWidget(
-                  achievementList: achievementList, index: index);
-            }
-          },
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    achievementList = getAchievements();
+    userAchievementList = getUserAchievements();
   }
+
+
+  // Define the getUserInfo function
+  Future<List<dynamic>> getAchievements() async {
+    try {
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/getAchievements';
+      var response = await http.get(
+        Uri.parse(apiUrl),
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        // Request successful, you can handle the response data here
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        final List<dynamic> jsonArray = jsonResponse['achievements'] ?? [];
+
+        return jsonArray;
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+        throw Exception('Failed to get achievementss.');
+      }
+    } catch (e){
+      // Handle errors, such as invalid credentials
+      print('Errorloading profile: $e');
+      throw Exception('Failed to get achievements Error: $e');
+    }
+  }
+
+
+  // Define the getUserInfo function
+  Future<List<dynamic>> getUserAchievements() async {
+    try {
+      //var userID = await SharedPreferencesUtil.loadUserIdFromLocalStorage();
+      var userID = "luK4dXzgq9eVH7ZL0NczLWCxe8J3";
+      String apiUrl =
+          'https://z725a0ie1j.execute-api.us-east-1.amazonaws.com/userStage/userAchievements';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'userID': userID,
+        },
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        // Request successful, you can handle the response data here
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        final List<dynamic> jsonArray = jsonResponse['achievements'] ?? [];
+
+
+        return jsonArray;
+      } else {
+        // Request failed, handle the error
+        print('Error response: ${response.statusCode}');
+        throw Exception('Failed to get user achievementss fixedd.');
+      }
+    } catch (e) {
+      // Handle errors, such as invalid credentials
+      print('Errorloading profile: $e');
+      throw Exception('Failed to get user achievements  Error: $e');
+    }
+  }
+
+
+  
+
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.white,
+    appBar: AppBar(
+      title: const Text("Achievements"),
+    ),
+    body: Padding(
+      padding: const EdgeInsets.only(top: 20.0, right: 10, left: 10, bottom: 20),
+      child: FutureBuilder<List<dynamic>>(
+        future: Future.wait([achievementList, userAchievementList]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // or some loading indicator
+          }
+
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+
+          List<dynamic> achievements = snapshot.data![0];
+          List<dynamic> userAchievements = snapshot.data![1];
+
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 20.0,
+              crossAxisSpacing: 20.0,
+            ),
+            itemCount: achievements.length,
+            itemBuilder: (context, index) {
+              bool isAchieved = userAchievements.contains(achievements[index]['docID']);
+
+              if (isAchieved) {
+                return AchievedWidget(
+                  achievementTitle: achievements[index]['title'],
+                  achievementURL: achievements[index]['starURL'],
+                );
+              } else {
+                return UnachievedWidget(
+                  achievementTitle: achievements[index]['title'],
+                  achievementURL: achievements[index]['starURL'],
+                );
+              }
+            },
+          );
+        },
+      ),
+    ),
+  );
+}
 }
 
-class AchievedWidget extends StatelessWidget {
-  const AchievedWidget(
-      {super.key, required this.achievementList, required this.index});
 
-  final List<String> achievementList;
-  final int index;
+
+class AchievedWidget extends StatelessWidget {
+  
+  final String achievementTitle;
+  final String achievementURL;
+
+  const AchievedWidget(
+      {super.key, required this.achievementTitle,  required this.achievementURL});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CircleAvatar(
-          backgroundImage: AssetImage('images/achievement.png'),
+       CircleAvatar(
           radius: 30,
+          backgroundImage: NetworkImage('https://cdn.vectorstock.com/i/preview-1x/93/60/royal-achievement-concept-3d-insignia-vector-42179360.jpg'),
         ),
         const SizedBox(
           height: 5,
         ),
-        Text('${achievementList[index]}'),
+        Text('${achievementTitle}'),
       ],
     );
   }
 }
 
+
 class UnachievedWidget extends StatelessWidget {
   const UnachievedWidget(
-      {super.key, required this.achievementList, required this.index});
+      {super.key, required this.achievementTitle,  required this.achievementURL});
 
-  final List<String> achievementList;
-  final int index;
+  final String achievementTitle;
+  final String achievementURL;
+
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CircleAvatar(
-          backgroundImage: AssetImage('images/achievement_grey.png'),
-          radius: 30,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(30), // Set your desired radius
+          child: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              Colors.grey, // Change this color to customize the grey shade
+              BlendMode.saturation,
+            ),
+            child: CircleAvatar(
+              radius: 30,
+              backgroundImage: NetworkImage('https://cdn.vectorstock.com/i/preview-1x/93/60/royal-achievement-concept-3d-insignia-vector-42179360.jpg'),
+            ),
+          ),
         ),
         const SizedBox(
           height: 5,
         ),
-        Text('${achievementList[index]}'),
+        Text('${achievementTitle}'),
       ],
     );
   }

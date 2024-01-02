@@ -117,7 +117,7 @@ class _CardDetailsState extends State<CardDetails> {
                             ),
                           ),
                           child: Container(
-                            width: 375,
+                            width: double.infinity,
                             height: 406,
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context)
@@ -219,12 +219,12 @@ class _CardDetailsState extends State<CardDetails> {
                           } else {
                             return Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                                  EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                               child: Container(
-                                width: 345,
-                                height: 78,
+                                width: double.infinity,
+                                height: 80,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[100],
+                                  color: Colors.cyanAccent,
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),
@@ -255,7 +255,8 @@ class _CardDetailsState extends State<CardDetails> {
                                                     MediaQuery.viewInsetsOf(
                                                         context),
                                                 child: Container(
-                                                  height: 175,
+                                                  width: double.infinity,
+                                                  height: 150,
                                                   child: QuickSellWidget(),
                                                 ),
                                               ),
@@ -305,6 +306,7 @@ class _CardDetailsState extends State<CardDetails> {
                                                     MediaQuery.viewInsetsOf(
                                                         context),
                                                 child: Container(
+                                                  width: double.infinity,
                                                   height: 300,
                                                   child: SellInAuctionWidget(),
                                                 ),
@@ -381,18 +383,18 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+            padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(25, 0, 0, 0),
                   child: Text(
                     'Start Price: ',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Outfit',
-                          fontSize: 16,
+                          fontSize: 20,
                         ),
                   ),
                 ),
@@ -437,7 +439,7 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(30, 10, 0, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(25, 10, 0, 0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -446,11 +448,11 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
                   'Duration in Hours: ',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Outfit',
-                        fontSize: 16,
+                        fontSize: 20,
                       ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(23, 0, 10, 0),
                   child: FlutterFlowIconButton(
                     borderColor: FlutterFlowTheme.of(context).primary,
                     borderRadius: 20,
@@ -526,7 +528,7 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(30, 10, 0, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(25, 10, 0, 0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -535,11 +537,11 @@ class _SellInAuctionWidgetState extends State<SellInAuctionWidget> {
                   'Duration in Minutes: ',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Outfit',
-                        fontSize: 16,
+                        fontSize: 20,
                       ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(6, 0, 10, 0),
                   child: FlutterFlowIconButton(
                     borderColor: FlutterFlowTheme.of(context).primary,
                     borderRadius: 20,
@@ -669,7 +671,7 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: 400,
-      height: 225,
+      height: 200,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
       ),
@@ -677,7 +679,7 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+            padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 10),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -737,7 +739,7 @@ class _QuickSellWidgetState extends State<QuickSellWidget> {
                 quickSellData = QuickSell(_CardDetailsState.cardId, sliderValue);
                 Navigator.pop(context);
               },
-              text: 'Button',
+              text: 'Sell',
               options: FFButtonOptions(
                 height: 40,
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
